@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Controls">
+
+    <Style TargetType="local:DataPresenter" x:Key="DefaultDataPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DataPresenter">
+                    <Grid>
+                        <ContentPresenter x:Name="Presenter"
+                                          Padding="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding Data}"
+                                          ContentTemplate="{TemplateBinding DataTemplate}" />
+                        <ContentPresenter x:Name="NoPresenter" Content="{TemplateBinding NoDataContent}" />
+                        <ContentPresenter x:Name="ExtraPresenter" Content="{TemplateBinding ExtraContent}" Visibility="Collapsed" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DataStates">
+                                <VisualState x:Name="NoData">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DrillOutThemeAnimation EntranceTargetName="NoPresenter" ExitTargetName="Presenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="HasData">
+                                    <VisualState.Setters>
+                                        <Setter Target="NoPresenter.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DrillInThemeAnimation EntranceTargetName="Presenter" ExitTargetName="NoPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Extra">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.Visibility" Value="Collapsed" />
+                                        <Setter Target="NoPresenter.Visibility" Value="Collapsed" />
+                                        <Setter Target="ExtraPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DrillInThemeAnimation EntranceTargetName="ExtraPresenter" ExitTargetName="Presenter" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:DataPresenter" BasedOn="{StaticResource DefaultDataPresenter}" />
+</ResourceDictionary>

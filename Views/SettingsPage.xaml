@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MyDairy.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Views"
+    xmlns:markup="using:MyDairy.Markup"
+    xmlns:root="using:MyDairy"
+    xmlns:helpers="using:MyDairy.Helpers"
+    xmlns:controls="using:MyDairy.Controls"
+    xmlns:settings="using:MyDairy.Settings"
+    xmlns:services="using:MyDairy.Services"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required">
+    <Page.Resources>
+        <x:Double x:Key="SettingsControlWidth">175</x:Double>
+
+        <Style BasedOn="{StaticResource RightAlignedCompactToggleSwitchStyle}" TargetType="ToggleSwitch" />
+        <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
+            <Setter Property="Width" Value="{StaticResource SettingsControlWidth}" />
+            <Setter Property="MinWidth" Value="{ThemeResource SettingsCardContentMinWidth}" />
+        </Style>
+        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+            <Setter Property="Width" Value="{StaticResource SettingsControlWidth}" />
+            <Setter Property="MinWidth" Value="{ThemeResource SettingsCardContentMinWidth}" />
+        </Style>
+        <Style TargetType="DropDownButton">
+            <Setter Property="Width" Value="{StaticResource SettingsControlWidth}" />
+            <Setter Property="HorizontalContentAlignment"  Value="Left" />
+        </Style>
+        <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+            <Setter Property="Width" Value="{StaticResource SettingsControlWidth}" />
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <StackPanel Margin="56,34,56,48" Spacing="4">
+            <!--#region Settings Header -->
+            <TextBlock x:Uid="/Settings/Header" Style="{StaticResource TitleLargeTextBlockStyle}" Margin="0,0,0,18" />
+            <!--#endregion-->
+
+            <!--#region Application Settings Header -->
+            <TextBlock x:Uid="/Settings/Application" />
+            <!--#endregion-->
+            <!--#region Application => Theme -->
+            <controls:SettingsCard x:Uid="/Settings/Theme" HeaderIcon="{markup:FontIcon Glyph=&#xE2B1;}">
+                <controls:SettingsCard.Description>
+                    <HyperlinkButton x:Uid="/Settings/ThemeCommand" Click="{x:Bind helpers:ComponentHelper.OpenSettingsColor}" />
+                </controls:SettingsCard.Description>
+                <ComboBox SelectedIndex="{x:Bind settings:AppSettings.Instance.Theme,Converter={StaticResource EnumIntConverter},Mode=TwoWay}">
+                    <TextBlock x:Uid="/Settings/ThemeDefault" />
+                    <TextBlock x:Uid="/Settings/ThemeLight" />
+                    <TextBlock x:Uid="/Settings/ThemeDark" />
+                </ComboBox>
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Application => Backdrop -->
+            <controls:SettingsCard x:Uid="/Settings/Backdrop" HeaderIcon="{markup:FontIcon Glyph=&#xEF1F;}">
+                <controls:SettingsCard.Description>
+                    <HyperlinkButton x:Uid="/Settings/Transparency" Click="{x:Bind helpers:ComponentHelper.OpenSettingsColor}" />
+                </controls:SettingsCard.Description>
+                <ComboBox SelectedIndex="{x:Bind settings:AppSettings.Instance.BackdropType,Converter={StaticResource EnumIntConverter},Mode=TwoWay}">
+                    <TextBlock x:Uid="/Settings/BackdropNone" />
+                    <ComboBoxItem IsEnabled="{x:Bind helpers:XamlHelper.And(services:ThemeService.Instance.IsTransparencyEnabled, services:ThemeService.IsSupportAcrylic),Mode=OneWay}">
+                        <TextBlock x:Uid="/Settings/BackdropAcrylic" />
+                    </ComboBoxItem>
+                    <ComboBoxItem IsEnabled="{x:Bind helpers:XamlHelper.And(services:ThemeService.Instance.IsTransparencyEnabled, services:ThemeService.IsSupportMica),Mode=OneWay}">
+                        <TextBlock x:Uid="/Settings/BackdropMica" />
+                    </ComboBoxItem>
+                    <ComboBoxItem IsEnabled="{x:Bind helpers:XamlHelper.And(services:ThemeService.Instance.IsTransparencyEnabled, services:ThemeService.IsSupportMica),Mode=OneWay}">
+                        <TextBlock x:Uid="/Settings/BackdropMicaAlt" />
+                    </ComboBoxItem>
+                </ComboBox>
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Application => Menu Bar Opacity -->
+            <controls:SettingsCard x:Uid="/Settings/MenuBarOpacity" HeaderIcon="{markup:FontIcon Glyph=&#xEB1D;}">
+                <Slider Minimum="0" Maximum="1" StepFrequency="0.01" SmallChange="0.01" LargeChange="0.1" Value="{x:Bind settings:AppSettings.Instance.MenuBarOpacity,Mode=TwoWay}" ThumbToolTipValueConverter="{StaticResource OpacityConverter}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Application => Content Opacity -->
+            <controls:SettingsCard x:Uid="/Settings/ContentOpacity" HeaderIcon="{markup:FontIcon Glyph=&#xEB1D;}">
+                <Slider Minimum="0" Maximum="1" StepFrequency="0.01" SmallChange="0.01" LargeChange="0.1" Value="{x:Bind settings:AppSettings.Instance.ContentOpacity,Mode=TwoWay}" ThumbToolTipValueConverter="{StaticResource OpacityConverter}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+
+            <!--#region Dairy Settings Header -->
+            <TextBlock x:Uid="/Settings/Dairy" Margin="0,8,0,0" />
+            <!--#endregion-->
+            <!--#region Dairy => Dairy View -->
+            <controls:SettingsCard x:Uid="/Settings/DairyView" HeaderIcon="{markup:FontIcon Glyph=&#xE7C4;}">
+                <ComboBox SelectedIndex="{x:Bind settings:AppSettings.Instance.DefaultDairyView,Converter={StaticResource EnumIntConverter},Mode=TwoWay}">
+                    <TextBlock x:Uid="/Settings/CompactDoubleListView" />
+                    <TextBlock x:Uid="/Settings/DoubleListView" />
+                    <TextBlock x:Uid="/Settings/TreeView" />
+                </ComboBox>
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Dairy Pane Display Mode -->
+            <controls:SettingsCard x:Uid="/Settings/DairyPaneDisplayMode" HeaderIcon="{markup:FontIcon Glyph=&#xE700;}">
+                <ComboBox SelectedIndex="{x:Bind settings:AppSettings.Instance.DairyPaneDisplayMode,Converter={StaticResource EnumIntConverter},Mode=TwoWay}">
+                    <TextBlock x:Uid="/Settings/Inline" />
+                    <TextBlock x:Uid="/Settings/Overlay" />
+                </ComboBox>
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Quick Note Display Mode -->
+            <controls:SettingsCard x:Uid="/Settings/QuickNoteDisplayMode" HeaderIcon="{markup:FontIcon Glyph=&#xE70B;}">
+                <ComboBox SelectedIndex="{x:Bind settings:AppSettings.Instance.QuickNoteDisplayMode,Converter={StaticResource EnumIntConverter},Mode=TwoWay}">
+                    <TextBlock x:Uid="/Settings/LeftPane" />
+                    <TextBlock x:Uid="/Settings/Bottom" />
+                    <TextBlock x:Uid="/Settings/Hidden" />
+                </ComboBox>
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Show Tab -->
+            <controls:SettingsCard x:Uid="/Settings/ShowTab" HeaderIcon="{markup:FontIcon Glyph=&#xEB41;}">
+                <ToggleSwitch x:Uid="/Settings/DefaultSwitch" IsOn="{x:Bind settings:AppSettings.Instance.ShowTab,Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Show Dairy Count -->
+            <controls:SettingsCard x:Uid="/Settings/ShowDairyCount" HeaderIcon="{markup:FontIcon Glyph=&#xE8C4;}">
+                <ToggleSwitch x:Uid="/Settings/DefaultSwitch" IsOn="{x:Bind settings:AppSettings.Instance.ShowDairyCount,Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Not Show Delete Again -->
+            <controls:SettingsCard x:Uid="/Settings/NotShowDeleteAgain" HeaderIcon="{markup:FontIcon Glyph=&#xE74D;}">
+                <ToggleSwitch x:Uid="/Settings/DefaultSwitch" IsOn="{x:Bind settings:AppSettings.Instance.NotShowDeleteAgain,Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+            <!--#region Dairy => Not Show Close Again -->
+            <controls:SettingsCard x:Uid="/Settings/NotShowCloseAgain" HeaderIcon="{markup:FontIcon Glyph=&#xE733;}">
+                <ToggleSwitch x:Uid="/Settings/DefaultSwitch" IsOn="{x:Bind settings:AppSettings.Instance.NotShowCloseAgain,Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <!--#endregion-->
+        </StackPanel>
+    </ScrollViewer>
+</Page>

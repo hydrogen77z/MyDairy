@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Controls">
+
+    <Style TargetType="local:DoubleListView" x:Key="DefaultDoubleListViewStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DoubleListView">
+                    <TwoPaneView x:Name="TwoPaneView"
+                                 PanePriority="Pane1"
+                                 MinTallModeHeight="0"
+                                 TallModeConfiguration="TopBottom"
+                                 WideModeConfiguration="SinglePane"
+                                 Pane1Length="{TemplateBinding ListHeight}">
+                        <TwoPaneView.Pane1>
+                            <ListView x:Name="RootListView"
+                                      SelectionMode="Single"
+                                      ItemsSource="{TemplateBinding ItemsSource}"
+                                      ItemTemplate="{TemplateBinding ItemTemplate}">
+                                <ListView.RenderTransform>
+                                    <TranslateTransform x:Name="RootListTransform" />
+                                </ListView.RenderTransform>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition />
+                                    </TransitionCollection>
+                                </ListView.ItemContainerTransitions>
+                            </ListView>
+                        </TwoPaneView.Pane1>
+                        <TwoPaneView.Pane2>
+                            <Grid x:Name="InnerComboPresenter"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="0,1,0,0">
+                                <ContentPresenter x:Name="NoInnerPresenter" Content="{TemplateBinding NoInnerContent}" />
+                                <Grid x:Name="InnerPresenter">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Button x:Name="BackButton" Style="{StaticResource TitleBarBackButtonStyle}" MaxHeight="32" Height="32" HorizontalAlignment="Left" Visibility="Collapsed" />
+                                    <ContentPresenter x:Name="InnerContent" Content="{TemplateBinding InnerContent}" ContentTemplate="{TemplateBinding InnerContentTemplate}" VerticalContentAlignment="Center" />
+
+                                    <ListView Grid.Row="1" x:Name="InnerListView" SelectionMode="Single"
+                                              ItemsSource="{TemplateBinding InnerItemsSource}"
+                                              ItemTemplate="{TemplateBinding InnerItemTemplate}">
+                                        <ListView.ItemContainerTransitions>
+                                            <TransitionCollection>
+                                                <AddDeleteThemeTransition />
+                                            </TransitionCollection>
+                                        </ListView.ItemContainerTransitions>
+                                    </ListView>
+
+                                    <ContentPresenter Grid.Row="2" Content="{TemplateBinding InnerBottomContent}" VerticalContentAlignment="Center" />
+                                </Grid>
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="InnerListTransform" />
+                                </Grid.RenderTransform>
+                            </Grid>
+                        </TwoPaneView.Pane2>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ModeStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Compact">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackButton.Visibility" Value="Visible" />
+                                        <Setter Target="TwoPaneView.MinTallModeHeight" Value="Infinity" />
+                                        <Setter Target="InnerComboPresenter.BorderThickness" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="InnerContentStates">
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PaneStates">
+                                <VisualState x:Name="NoInner">
+                                    <VisualState.Setters>
+                                        <Setter Target="InnerPresenter.Visibility" Value="Collapsed" />
+                                        <!--<Setter Target="NoInnerPresenter.Visibility" Value="Visible" />-->
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DrillOutThemeAnimation ExitTargetName="InnerPresenter" EntranceTargetName="NoInnerPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="HasInner">
+                                    <VisualState.Setters>
+                                        <!--<Setter Target="InnerPresenter.Visibility" Value="Visible" />-->
+                                        <Setter Target="NoInnerPresenter.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DrillInThemeAnimation ExitTargetName="NoInnerPresenter" EntranceTargetName="InnerPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CompactExitInner">
+                                    <VisualState.Setters>
+                                        <Setter Target="InnerPresenter.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootListTransform" Storyboard.TargetProperty="X">
+                                            <DiscreteDoubleKeyFrame x:Name="CompactBackAnimation" KeyTime="0" />
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.35" KeySpline="0.1,0.9 0.2,1.0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CompactToInner">
+                                    <VisualState.Setters>
+                                        <Setter Target="NoInnerPresenter.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerListTransform" Storyboard.TargetProperty="X">
+                                            <DiscreteDoubleKeyFrame x:Name="CompactSelectedAnimation" KeyTime="0" />
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.35" KeySpline="0.1,0.9 0.2,1.0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <!--<VisualStateGroup x:Name="CompactStates">
+
+                            </VisualStateGroup>-->
+                        </VisualStateManager.VisualStateGroups>
+                    </TwoPaneView>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:DoubleListView" BasedOn="{StaticResource DefaultDoubleListViewStyle}" />
+</ResourceDictionary>

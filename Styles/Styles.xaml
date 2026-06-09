@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy"
+    xmlns:controls="using:MyDairy.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Controls/DataPresenter.xaml" />
+        <ResourceDictionary Source="/Controls/DoubleListView.xaml" />
+        <ResourceDictionary Source="/Controls/FeedbackButton.xaml" />
+        <ResourceDictionary Source="/Controls/GroupBox.xaml" />
+        <ResourceDictionary Source="/Controls/HeaderTextBlock.xaml" />
+        <ResourceDictionary Source="/Controls/PropertyExpander.xaml" />
+        <ResourceDictionary Source="/Controls/SettingsCard.xaml" />
+        <ResourceDictionary Source="/Controls/SettingsExpander.xaml" />
+
+        <!-- Extended Styles -->
+        <ResourceDictionary Source="/Styles/Controls.xaml" />
+        <ResourceDictionary Source="/Styles/Values.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MyDairy.Views.DebugPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Views"
+    xmlns:markup="using:MyDairy.Markup"
+    xmlns:common="using:MyDairy.Common"
+    xmlns:models="using:MyDairy.Models"
+    xmlns:helpers="using:MyDairy.Helpers"
+    xmlns:controls="using:MyDairy.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required">
+
+    <Grid>
+        <StackPanel Spacing="8" Margin="8">
+            <ContentPresenter x:Name="Presenter">
+                <ContentPresenter.ContentTemplate>
+                    <DataTemplate x:DataType="models:DairyText">
+                        <StackPanel>
+                            <TextBlock Text="1" />
+                            <TextBlock Text="1" />
+                            <TextBlock Text="1" />
+                            <TextBlock Text="{x:Bind Body}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ContentPresenter.ContentTemplate>
+            </ContentPresenter>
+
+            <Button Content="Change" Click="Button_Click" />
+
+            <controls:GroupBox Header="Header">
+                <Button Content="This is a Test Button in GroupBox" />
+            </controls:GroupBox>
+
+            <controls:HeaderTextBlock Header="Header" Text="Text" />
+
+            <ContentPresenter x:Name="MainPresenter">
+                <ContentPresenter.ContentTemplate>
+                    <DataTemplate x:DataType="models:DairyText">
+                        <StackPanel>
+                            <TextBlock Text="Test" />
+                            <TextBlock Text="{x:Bind Body}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ContentPresenter.ContentTemplate>
+            </ContentPresenter>
+
+            <controls:FeedbackButton Content="Content" FeedBackContent="FeedbackContent" />
+            <controls:FeedbackButton Content="Content" FeedBackContent="FeedbackContent" Style="{StaticResource AccentFeedbackButtonStyle}" />
+
+            <TextBox x:Name="TestTextBox" />
+            <Button Content="IsEnabled" IsEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(TestTextBox.Text),Mode=OneWay}" />
+
+            <Expander Header="Header" Style="{StaticResource PropertyExpanderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Text" />
+                </StackPanel>
+            </Expander>
+
+            <Slider Minimum="0" Maximum="1" StepFrequency="0.01" />
+            <Button Content="New Window" Click="Button_Click_1" />
+
+            <ComboBox IsEditable="True">
+                <x:String>Item 1</x:String>
+                <x:String>Item 2</x:String>
+                <x:String>Item 3</x:String>
+                <x:String>Item 4</x:String>
+                <x:String>Item 5</x:String>
+                <x:String>Item 6</x:String>
+            </ComboBox>
+
+            <PasswordBox x:Name="PasswordBox" />
+        </StackPanel>
+    </Grid>
+</Page>

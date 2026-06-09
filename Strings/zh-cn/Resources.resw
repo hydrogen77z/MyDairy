@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFiles" xml:space="preserve">
+    <value>所有文件</value>
+  </data>
+  <data name="Cancel.Text" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Close.Text" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="DialogError.Title" xml:space="preserve">
+    <value>捕获到异常</value>
+  </data>
+  <data name="DialogJsonError.Title" xml:space="preserve">
+    <value>文件读取错误</value>
+  </data>
+  <data name="DialogJsonErrorText.Text" xml:space="preserve">
+    <value>不是有效的JSON文件格式</value>
+  </data>
+  <data name="FlyoutDelete.Text" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="FlyoutNewText.Text" xml:space="preserve">
+    <value>新建日记</value>
+  </data>
+  <data name="IsSaveToFile.Title" xml:space="preserve">
+    <value>保存文件</value>
+  </data>
+  <data name="IsSaveToFilePath" xml:space="preserve">
+    <value>是否要保存更改到</value>
+  </data>
+  <data name="IsSaveToNewFilePath" xml:space="preserve">
+    <value>是否要另存为该未保存的日记本</value>
+  </data>
+  <data name="JsonFile" xml:space="preserve">
+    <value>JSON 文件</value>
+  </data>
+  <data name="MenuFile.Title" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="MenuFileNew.Text" xml:space="preserve">
+    <value>新建</value>
+  </data>
+  <data name="MenuFileOpen.Text" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="MenuFileSave.Text" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="MenuFileSaveAs.Text" xml:space="preserve">
+    <value>另存为</value>
+  </data>
+  <data name="MenuView.Title" xml:space="preserve">
+    <value>视图</value>
+  </data>
+  <data name="MenuViewPane.Text" xml:space="preserve">
+    <value>日记视图</value>
+  </data>
+  <data name="CreateNewDay.Title" xml:space="preserve">
+    <value>创建新的一天</value>
+  </data>
+  <data name="MyDairyFile" xml:space="preserve">
+    <value>日记文件</value>
+  </data>
+  <data name="NewAuthor.Header" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="NewAuthor.PlaceholderText" xml:space="preserve">
+    <value>作者名，可为空</value>
+  </data>
+  <data name="NewDairy.Title" xml:space="preserve">
+    <value>新建日记本</value>
+  </data>
+  <data name="NewDescription.Header" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="NewDescription.PlaceholderText" xml:space="preserve">
+    <value>对整本日记的描述...</value>
+  </data>
+  <data name="NewName.Header" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="NewName.PlaceholderText" xml:space="preserve">
+    <value>日记本的名称（可以与文件名不同）</value>
+  </data>
+  <data name="NoInnerContent.Text" xml:space="preserve">
+    <value>选中日期以查看</value>
+  </data>
+  <data name="Ok.Text" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="Save.Text" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="SuggestBox.PlaceholderText" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Unsave.Text" xml:space="preserve">
+    <value>不保存</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>未保存</value>
+  </data>
+  <data name="FlyoutNewDay.Text" xml:space="preserve">
+    <value>新建一天</value>
+  </data>
+  <data name="CommandNewDay.Label" xml:space="preserve">
+    <value>新建一天</value>
+  </data>
+  <data name="CommandNewText.Label" xml:space="preserve">
+    <value>新建日记</value>
+  </data>
+  <data name="CreateNewDayFormat" xml:space="preserve">
+    <value>{0}（默认为今天）</value>
+  </data>
+  <data name="CreateNewText.Title" xml:space="preserve">
+    <value>创建新日记</value>
+  </data>
+  <data name="NewTextTitle.Header" xml:space="preserve">
+    <value>标题</value>
+  </data>
+  <data name="NewTextTitle.PlaceholderText" xml:space="preserve">
+    <value>新日记的标题</value>
+  </data>
+  <data name="NewTextDescription.Header" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="NewTextDescription.PlaceholderText" xml:space="preserve">
+    <value>添加额外的描述...</value>
+  </data>
+  <data name="FlyoutView.Text" xml:space="preserve">
+    <value>查看</value>
+  </data>
+  <data name="DeleteConfirm.Title" xml:space="preserve">
+    <value>确认删除？</value>
+  </data>
+  <data name="DeleteConfirmTextFormat" xml:space="preserve">
+    <value>确认要删除 {0} 的日记 {1} 吗？</value>
+  </data>
+  <data name="DeleteConfirmCheckBox.Content" xml:space="preserve">
+    <value>不再提示</value>
+  </data>
+  <data name="DeleteConfirmDayFormat" xml:space="preserve">
+    <value>确认要删除 {0} 这一天以及包含的所有日记吗？</value>
+  </data>
+  <data name="CommandDeleteText.Label" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="MenuFileNewDairy.Text" xml:space="preserve">
+    <value>新的日记本</value>
+  </data>
+  <data name="NewTextDefaultTitleFormat" xml:space="preserve">
+    <value>未命名#{0}</value>
+  </data>
+  <data name="MenuFileInfo.Text" xml:space="preserve">
+    <value>文件信息</value>
+  </data>
+  <data name="CommandFileInfo.Label" xml:space="preserve">
+    <value>文件信息</value>
+  </data>
+  <data name="FileInfoBaseEdit.Text" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="FileInfoBaseName.Header" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="FileInfoBaseAuthor.Header" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="FileInfoTime.Text" xml:space="preserve">
+    <value>时间信息</value>
+  </data>
+  <data name="FileInfoEncrypt.Text" xml:space="preserve">
+    <value>加密信息</value>
+  </data>
+  <data name="FileInfoBase.Text" xml:space="preserve">
+    <value>日记本基本信息</value>
+  </data>
+  <data name="FileInfoBaseTotalText.Header" xml:space="preserve">
+    <value>日记总数</value>
+  </data>
+  <data name="FileInfoBaseDescription.Header" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="FileInfoTimeCreate.Header" xml:space="preserve">
+    <value>创建时间</value>
+  </data>
+  <data name="FileInfoTimeLastEdit.Header" xml:space="preserve">
+    <value>最后一次编辑时间</value>
+  </data>
+  <data name="CreateTime.Text" xml:space="preserve">
+    <value>创建时间：</value>
+  </data>
+  <data name="LastEditTime.Text" xml:space="preserve">
+    <value>最后一次编辑时间：</value>
+  </data>
+  <data name="MenuViewPaneDisplayMode.Text" xml:space="preserve">
+    <value>面板显示方式</value>
+  </data>
+  <data name="MenuViewQuickNote.Text" xml:space="preserve">
+    <value>快速笔记显示方式</value>
+  </data>
+  <data name="CloseWindow.Title" xml:space="preserve">
+    <value>确认要关闭吗？</value>
+  </data>
+  <data name="CloseWindow.Content" xml:space="preserve">
+    <value>当前文件未保存，是否保存更改到当前文件？</value>
+  </data>
+  <data name="MenuViewShowCount.Text" xml:space="preserve">
+    <value>显示日记数量</value>
+  </data>
+  <data name="EditFileInfo.Title" xml:space="preserve">
+    <value>编辑文件信息</value>
+  </data>
+  <data name="MenuViewShowTab.Text" xml:space="preserve">
+    <value>显示标签页</value>
+  </data>
+  <data name="FlyoutEdit.Text" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="DescriptionProperty.Text" xml:space="preserve">
+    <value>描述(可编辑)：</value>
+  </data>
+  <data name="CommandApproximate.Label" xml:space="preserve">
+    <value>标记为近似时间</value>
+  </data>
+  <data name="DairyIsTimeApproximate.Text" xml:space="preserve">
+    <value>这篇日记的时间是近似值，非精确时刻！</value>
+  </data>
+  <data name="DialogStackTrace.Header" xml:space="preserve">
+    <value>显示堆栈追踪</value>
+  </data>
+  <data name="NewTextMoreOptions.Header" xml:space="preserve">
+    <value>显示更多选项</value>
+  </data>
+  <data name="NewTextApproximate.Content" xml:space="preserve">
+    <value>自定义近似的创建时间</value>
+  </data>
+  <data name="NewTextApproximateTime.PlaceholderText" xml:space="preserve">
+    <value>例如：14:40:07（可选）</value>
+  </data>
+  <data name="NewDayText.Header" xml:space="preserve">
+    <value>选择日期或输入新的日期</value>
+  </data>
+  <data name="MenuEdit.Title" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="MenuEditUndo.Text" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="MenuEditRedo.Text" xml:space="preserve">
+    <value>重做</value>
+  </data>
+  <data name="CommandUndo.Label" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="CommandRedo.Label" xml:space="preserve">
+    <value>重做</value>
+  </data>
+  <data name="RequestPasswordDialog.Title" xml:space="preserve">
+    <value>解锁文件</value>
+  </data>
+  <data name="RequestPassword.Text" xml:space="preserve">
+    <value>该文件已被加密，需要密码才能读取</value>
+  </data>
+  <data name="FileInfoNotEncrypted" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="FileInfoSetPassword.Text" xml:space="preserve">
+    <value>设置密码</value>
+  </data>
+  <data name="FileInfoEncrypted" xml:space="preserve">
+    <value>已加密</value>
+  </data>
+  <data name="FileInfoChangePassword.Text" xml:space="preserve">
+    <value>修改密码</value>
+  </data>
+  <data name="FileInfoRemovePassword.Text" xml:space="preserve">
+    <value>移除密码</value>
+  </data>
+  <data name="SetPasswordDialog.Title" xml:space="preserve">
+    <value>设置密码</value>
+  </data>
+  <data name="RemovePasswordDialog.Title" xml:space="preserve">
+    <value>确定要移除密码吗？</value>
+  </data>
+  <data name="NewSetPassword.Content" xml:space="preserve">
+    <value>设置密码</value>
+  </data>
+  <data name="ChangePasswordDialog.Title" xml:space="preserve">
+    <value>修改密码</value>
+  </data>
+</root>

@@ -1,0 +1,10 @@
+﻿LoadImage
+GetModuleHandle
+SendMessage
+WM_SETICON
+ICON_BIG
+ICON_SMALL
+//GetWindowLong
+//SetWindowLong
+//WINDOW_LONG_PTR_INDEX
+//WINDOW_EX_STYLE

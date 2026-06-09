@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MyDairy.Views.NotePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Views"
+    xmlns:common="using:MyDairy.Common"
+    xmlns:models="using:MyDairy.Models"
+    xmlns:markup="using:MyDairy.Markup"
+    xmlns:attached="using:MyDairy.Attached"
+    xmlns:helpers="using:MyDairy.Helpers"
+    xmlns:settings="using:MyDairy.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Required">
+
+    <Page.Tag>
+        <common:ObjectCollection>
+            <ContentDialog x:Name="NewNoteDialog" x:Uid="/Note/NewNote" attached:DialogExtension.Kind="OkClose"
+                           IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(NewNoteBox.Text),Mode=OneWay}">
+                <TextBox x:Name="NewNoteBox" x:Uid="/Note/NewNoteBox" Width="400" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
+            </ContentDialog>
+            <ContentDialog x:Name="EditNoteDialog" x:Uid="/Note/EditNote" attached:DialogExtension.Kind="OkClose"
+                           IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(EditNoteBox.Text),Mode=OneWay}">
+                <TextBox x:Name="EditNoteBox" x:Uid="/Note/NewNoteBox" Width="400" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
+            </ContentDialog>
+        </common:ObjectCollection>
+    </Page.Tag>
+    
+    <Page.Resources>
+        <MenuFlyout x:Key="NoteDeleteFlyout">
+            <MenuFlyoutItem x:Uid="FlyoutEdit" Icon="{markup:FontIcon Glyph=&#xE70F;}" Click="OnEditNoteContext" />
+            <MenuFlyoutItem x:Uid="FlyoutDelete" Icon="{markup:FontIcon Glyph=&#xE74D;}" Click="OnDeleteNoteContext" />
+        </MenuFlyout>
+    </Page.Resources>
+    
+    <Grid Margin="8" MaxWidth="900">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GridView x:Name="NoteList" ItemsSource="{x:Bind settings:AppSettings.Instance.Notes}" SelectionMode="Single" SelectionChanged="NoteList_SelectionChanged">
+            <GridView.Header>
+                <TextBlock x:Uid="/Note/AllNotes" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8,0,0,8" />
+            </GridView.Header>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="models:Note">
+                    <GridViewItem HorizontalContentAlignment="Left" ContextFlyout="{StaticResource NoteDeleteFlyout}">
+                        <StackPanel Margin="8" Spacing="4">
+                            <TextBlock Text="{x:Bind Content,Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource LowlightTextBlock}" FontSize="12" Text="{x:Bind helpers:XamlHelper.DateTimeToString(LastEditTime),Mode=OneWay}" />
+                        </StackPanel>
+                    </GridViewItem>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
+        <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
+            <AppBarButton x:Uid="/Note/NewNoteCommand" Icon="Add" Click="OnNewNote" />
+
+            <AppBarButton x:Name="EditCommand" x:Uid="/Note/EditNoteCommand" Icon="Edit" Click="OnEditNote" />
+            <AppBarButton x:Name="DeleteCommand" x:Uid="/Note/DeleteNoteCommand" Icon="Delete" Click="OnDeleteNote" />
+        </CommandBar>
+    </Grid>
+</Page>

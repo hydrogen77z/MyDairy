@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyDairy (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MyDairy (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

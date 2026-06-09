@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MyDairy.Views.DairyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyDairy.Views"
+    xmlns:markup="using:MyDairy.Markup"
+    xmlns:common="using:MyDairy.Common"
+    xmlns:models="using:MyDairy.Models"
+    xmlns:helpers="using:MyDairy.Helpers"
+    xmlns:controls="using:MyDairy.Controls"
+    xmlns:settings="using:MyDairy.Settings"
+    xmlns:system="using:System"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="OnLoaded"
+    NavigationCacheMode="Required">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="MenuBarBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
+        <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{ThemeResource SolidBackgroundFillColorTertiary}" />
+
+        <MenuFlyout x:Key="DairyDayFlyout">
+            <MenuFlyoutItem x:Uid="FlyoutNewDay" Icon="{markup:FontIcon Glyph=&#xE710;}" Click="OnCreateNewDay" />
+            <MenuFlyoutItem x:Uid="FlyoutNewText" Icon="{markup:FontIcon Glyph=&#xECC8;}" Click="OnCreateNewTextContext" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem x:Uid="FlyoutDelete" Icon="{markup:FontIcon Glyph=&#xE74D;}" Click="OnDeleteDayContext" />
+        </MenuFlyout>
+
+        <MenuFlyout x:Key="DairyTextFlyout">
+            <MenuFlyoutItem x:Uid="FlyoutNewDay" Icon="{markup:FontIcon Glyph=&#xE710;}" Click="OnCreateNewDay" />
+            <MenuFlyoutItem x:Uid="FlyoutNewText" Icon="{markup:FontIcon Glyph=&#xECC8;}" Click="OnCreateNewTextContext" />
+            <MenuFlyoutItem x:Uid="FlyoutView" Icon="{markup:FontIcon Glyph=&#xE890;}" Click="OnViewDairyText" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem x:Uid="FlyoutDelete" Icon="{markup:FontIcon Glyph=&#xE74D;}" Click="OnDeleteTextContext" />
+        </MenuFlyout>
+
+        <MenuFlyout x:Key="DairyFileFlyout">
+            <MenuFlyoutItem x:Uid="FlyoutNewDay" Icon="{markup:FontIcon Glyph=&#xE710;}" Click="OnCreateNewDay" />
+            <MenuFlyoutItem x:Uid="FlyoutNewText" Icon="{markup:FontIcon Glyph=&#xECC8;}" Click="OnCreateNewTextContext" />
+        </MenuFlyout>
+
+        <!--#region Dairy Day -->
+        <DataTemplate x:Key="DairyDayTreeViewItemTemplate" x:DataType="models:DairyDay">
+            <TreeViewItem ItemsSource="{x:Bind Texts}" ContextFlyout="{StaticResource DairyDayFlyout}">
+                <TextBlock>
+                    <Run Text="{x:Bind helpers:XamlHelper.DateOnlyToString(Date),Mode=OneWay}" />
+                    <Run FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind CountString,Mode=OneWay}" />
+                </TextBlock>
+            </TreeViewItem>
+        </DataTemplate>
+        <DataTemplate x:Key="DairyDayListViewItemTemplate" x:DataType="models:DairyDay">
+            <ListViewItem ContextFlyout="{StaticResource DairyDayFlyout}">
+                <TextBlock>
+                    <Run Text="{x:Bind helpers:XamlHelper.DateOnlyToString(Date),Mode=OneWay}" />
+                    <Run FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind CountString,Mode=OneWay}" />
+                </TextBlock>
+            </ListViewItem>
+        </DataTemplate>
+        <!--#endregion-->
+
+        <!--#region Dairy Text -->
+        <DataTemplate x:Key="DairyTextTreeViewItemTemplate" x:DataType="models:DairyText">
+            <TreeViewItem ContextFlyout="{StaticResource DairyTextFlyout}">
+                <TextBlock>
+                    <Run Text="{x:Bind helpers:XamlHelper.IsSavedToGlyph(IsSaved),Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /><Run Text="{x:Bind Title,Mode=OneWay}" />
+                </TextBlock>
+            </TreeViewItem>
+        </DataTemplate>
+        <DataTemplate x:Key="DairyTextListViewItemTemplate" x:DataType="models:DairyText">
+            <ListViewItem ContextFlyout="{StaticResource DairyTextFlyout}">
+                <TextBlock>
+                    <Run Text="{x:Bind helpers:XamlHelper.IsSavedToGlyph(IsSaved),Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /><Run Text="{x:Bind Title,Mode=OneWay}" />
+                </TextBlock>
+            </ListViewItem>
+        </DataTemplate>
+        <!--#endregion-->
+
+        <controls:DairyTreeViewItemSelector x:Key="DairyTreeViewItemSelector"
+                                            DairyDayTemplate="{StaticResource DairyDayTreeViewItemTemplate}"
+                                            DairyTextTemplate="{StaticResource DairyTextTreeViewItemTemplate}" />
+    </Page.Resources>
+
+    <Page.Tag>
+        <common:ObjectCollection>
+            <ContentDialog x:Uid="DialogJsonError" x:Name="JsonDialog">
+                <ScrollViewer>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Uid="DialogJsonErrorText" />
+                        <TextBlock Grid.Row="1" x:Name="JsonDialogMessage" IsTextSelectionEnabled="True" Style="{StaticResource LowlightTextBlock}" />
+                        <Expander Grid.Row="2" x:Name="JsonDialogExpander" x:Uid="DialogStackTrace" Style="{StaticResource PropertyExpanderStyle}">
+                            <TextBlock x:Name="JsonDialogStackTrace" IsTextSelectionEnabled="True" Style="{StaticResource LowlightTextBlock}" />
+                        </Expander>
+                    </Grid>
+                </ScrollViewer>
+            </ContentDialog>
+            <ContentDialog x:Uid="DialogError" x:Name="ErrorDialog">
+                <ScrollViewer>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="ErrorDialogMessage" IsTextSelectionEnabled="True" Style="{StaticResource LowlightTextBlock}" />
+                        <Expander Grid.Row="1" x:Name="ErrorDialogExpander" x:Uid="DialogStackTrace" Style="{StaticResource PropertyExpanderStyle}">
+                            <TextBlock x:Name="ErrorDialogStackTrace" IsTextSelectionEnabled="True" Style="{StaticResource LowlightTextBlock}" />
+                        </Expander>
+                    </Grid>
+                </ScrollViewer>
+            </ContentDialog>
+            <ContentDialog x:Uid="NewDairy" x:Name="NewDairyDialog" IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.IsValidOrCollapsed(NewPasswordControl.IsPasswordValid, NewPasswordControl.Visibility),Mode=OneWay}">
+                <StackPanel Width="400" Spacing="8">
+                    <TextBox x:Uid="NewName" x:Name="NewDairyNameBox" />
+                    <TextBox x:Uid="NewAuthor" x:Name="NewDairyAuthorBox" />
+                    <TextBox x:Uid="NewDescription" x:Name="NewDairyDescriptionBox" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
+
+                    <CheckBox x:Uid="NewSetPassword" x:Name="NewSetPasswordBox" Checked="NewPasswordBox_Checked" Unchecked="NewPasswordBox_Checked" />
+                    <controls:PasswordControl x:Name="NewPasswordControl" PasswordInputMode="Create" Width="400" Visibility="Collapsed" />
+                    <!--<StackPanel x:Name="NewSetPasswordPart" Spacing="8">
+                        <PasswordBox x:Uid="ChangePassword" x:Name="ChangeNewPasswordBox" PasswordChanged="NewPasswordBox_PasswordChanged" />
+                        <PasswordBox x:Uid="VerifyPassword" x:Name="VerifyNewPasswordBox" PasswordChanged="NewPasswordBox_PasswordChanged" />
+
+                        <TextBlock TextWrapping="Wrap" Foreground="{ThemeResource SystemFillColorCautionBrush}">
+                            <Run FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE946;" />
+                            <Run x:Uid="SetPasswordPrompt" />
+                        </TextBlock>
+                        <TextBlock x:Name="NewPasswordVerifyPrompt" TextWrapping="Wrap" Foreground="{ThemeResource SystemFillColorCriticalBrush}">
+                            <Run FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xEA39;" />
+                            <Run x:Uid="ChangePasswordPrompt" />
+                        </TextBlock>
+                    </StackPanel>-->
+                </StackPanel>
+            </ContentDialog>
+            <ContentDialog x:Uid="IsSaveToFile" x:Name="IsSaveToFileDialog" />
+            <ContentDialog x:Uid="CreateNewDay" x:Name="CreateNewDayDialog">
+                <TextBox x:Name="CreateNewDayBox"  />
+            </ContentDialog>
+            <ContentDialog x:Uid="CreateNewText" x:Name="CreateNewTextDialog">
+                <StackPanel Width="400" Spacing="8">
+                    <ComboBox x:Uid="NewDayText" x:Name="NewTextDateBox" IsEditable="True" HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:DairyDay">
+                                <TextBlock Text="{x:Bind helpers:XamlHelper.DateOnlyToString(Date),Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBox x:Uid="NewTextTitle" x:Name="NewTextTitle" />
+                    <TextBox x:Uid="NewTextDescription" x:Name="NewTextDescription" />
+
+                    <Expander x:Name="NewTextMoreOptionsExpander" x:Uid="NewTextMoreOptions" Style="{StaticResource PropertyExpanderStyle}">
+                        <Grid RowSpacing="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <CheckBox x:Uid="NewTextApproximate" x:Name="NewTextApproximateBox" />
+                            <TextBox Grid.Row="1" x:Uid="NewTextApproximateTime" x:Name="NewTextApproximateTextBox" HorizontalAlignment="Left" MinWidth="240"
+                                     IsEnabled="{x:Bind helpers:XamlHelper.BoolNullToTrue(NewTextApproximateBox.IsChecked),Mode=OneWay}" />
+                        </Grid>
+                    </Expander>
+                </StackPanel>
+            </ContentDialog>
+            <ContentDialog x:Uid="DeleteConfirm" x:Name="DeleteConfirmDialog">
+                <StackPanel Spacing="4">
+                    <TextBlock x:Name="DeleteConfirmTextBlock" />
+                    <CheckBox x:Name="DeleteConfirmCheckBox" x:Uid="DeleteConfirmCheckBox" VerticalAlignment="Center" />
+                </StackPanel>
+            </ContentDialog>
+            <ContentDialog x:Uid="EditFileInfo" x:Name="EditFileInfoDialog">
+                <StackPanel Width="400" Spacing="8">
+                    <TextBox x:Uid="NewName" x:Name="EditDairyNameBox" />
+                    <TextBox x:Uid="NewAuthor" x:Name="EditDairyAuthorBox" />
+                    <TextBox x:Uid="NewDescription" x:Name="EditDairyDescriptionBox" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
+                </StackPanel>
+            </ContentDialog>
+            <ContentDialog x:Uid="RequestPasswordDialog" x:Name="RequestPasswordDialog"
+                           IsPrimaryButtonEnabled="{x:Bind RequestPasswordControl.IsPasswordValid,Mode=OneWay}"
+                           PrimaryButtonClick="RequestPasswordDialog_PrimaryButtonClick"
+                           CloseButtonClick="RequestPasswordDialog_CloseButtonClick">
+                <StackPanel Spacing="4">
+                    <TextBlock x:Uid="RequestPassword" />
+                    <controls:PasswordControl x:Name="RequestPasswordControl" PasswordInputMode="Request" />
+                </StackPanel>
+            </ContentDialog>
+            <ContentDialog x:Uid="SetPasswordDialog" x:Name="SetPasswordDialog" IsPrimaryButtonEnabled="{x:Bind SetPasswordControl.IsPasswordValid,Mode=OneWay}">
+                <controls:PasswordControl x:Name="SetPasswordControl" PasswordInputMode="Create" />
+            </ContentDialog>
+            <ContentDialog x:Uid="ChangePasswordDialog" x:Name="ChangePasswordDialog"
+                           IsPrimaryButtonEnabled="{x:Bind ChangePasswordControl.IsPasswordValid,Mode=OneWay}" PrimaryButtonClick="ChangePasswordDialog_PrimaryButtonClick">
+                <controls:PasswordControl x:Name="ChangePasswordControl" PasswordInputMode="Change" />
+            </ContentDialog>
+            <ContentDialog x:Uid="RemovePasswordDialog" x:Name="RemovePasswordDialog"
+                           IsPrimaryButtonEnabled="{x:Bind RemovePasswordControl.IsPasswordValid,Mode=OneWay}" PrimaryButtonClick="RemovePasswordDialog_PrimaryButtonClick">
+                <controls:PasswordControl x:Name="RemovePasswordControl" PasswordInputMode="Request" />
+            </ContentDialog>
+        </common:ObjectCollection>
+    </Page.Tag>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--#region Menu Bar -->
+        <MenuBar Background="{ThemeResource MenuBarBackgroundBrush}" MinHeight="32">
+            <MenuBarItem Margin="4,0" x:Uid="MenuFile">
+                <MenuFlyoutSubItem x:Uid="MenuFileNew" Icon="{markup:FontIcon Glyph=&#xE710;}">
+                    <MenuFlyoutItem x:Uid="MenuFileNewDairy" Icon="{markup:FontIcon Glyph=&#xE8A5;}" Click="OnMenuFileNewClick">
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="N" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem x:Uid="FlyoutNewDay" Icon="{markup:FontIcon Glyph=&#xE710;}" Click="OnCreateNewDay" IsEnabled="{x:Bind ViewModel.HasCurrentFile,Mode=OneWay}" />
+                    <MenuFlyoutItem x:Uid="FlyoutNewText" Icon="{markup:FontIcon Glyph=&#xECC8;}" Click="OnCreateNewText" IsEnabled="{x:Bind ViewModel.HasCurrentFile,Mode=OneWay}" />
+                </MenuFlyoutSubItem>
+                <MenuFlyoutItem x:Uid="MenuFileOpen" Icon="{markup:FontIcon Glyph=&#xE8E5;}" Click="OnMenuFileOpenClick">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="O" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem x:Uid="MenuFileSave" Icon="{markup:FontIcon Glyph=&#xE74E;}" Click="OnMenuFileSaveClick" IsEnabled="{x:Bind ViewModel.HasCurrentFile,Mode=OneWay}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Uid="MenuFileSaveAs" Icon="{markup:FontIcon Glyph=&#xE792;}" Click="OnMenuFileSaveAsClick" IsEnabled="{x:Bind ViewModel.HasCurrentFile,Mode=OneWay}">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control,Shift" Key="S" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem x:Uid="MenuFileInfo" Icon="{markup:FontIcon Glyph=&#xE712;}" Click="OnMenuFileInfoClick" IsEnabled="{x:Bind ViewModel.HasCurrentFile,Mode=OneWay}" />
+            </MenuBarItem>
+            <MenuBarItem Margin="4,0" x:Uid="MenuEdit">
+                <MenuFlyoutItem x:Uid="MenuEditUndo" Icon="{markup:FontIcon Glyph=&#xE7A7;}" Click="OnUndo" IsEnabled="{x:Bind ViewModel.CanUndo,Mode=OneWay}" />
+                <MenuFlyoutItem x:Uid="MenuEditRedo" Icon="{markup:FontIcon Glyph=&#xE7A6;}" Click="OnRedo" IsEnabled="{x:Bind ViewModel.CanRedo,Mode=OneWay}" />
+            </MenuBarItem>
+            <MenuBarItem Margin="4,0" x:Uid="MenuView">
+                <MenuFlyoutSubItem x:Uid="MenuViewPane">
+                    <RadioMenuFlyoutItem x:Name="MenuViewPane0" Tag="0" x:Uid="/Settings/CompactDoubleListView" />
+                    <RadioMenuFlyoutItem x:Name="MenuViewPane1" Tag="1" x:Uid="/Settings/DoubleListView" />
+                    <RadioMenuFlyoutItem x:Name="MenuViewPane2" Tag="2" x:Uid="/Settings/TreeView" />
+                </MenuFlyoutSubItem>
+                <MenuFlyoutSubItem x:Uid="MenuViewPaneDisplayMode">
+                    <RadioMenuFlyoutItem x:Name="MenuViewPaneDisplayMode0" Tag="0" x:Uid="/Settings/Inline" />
+                    <RadioMenuFlyoutItem x:Name="MenuViewPaneDisplayMode1" Tag="1" x:Uid="/Settings/Overlay" />
+                </MenuFlyoutSubItem>
+                <MenuFlyoutSubItem x:Uid="MenuViewQuickNote">
+                    <RadioMenuFlyoutItem x:Name="MenuViewQuickNote0" Tag="0" x:Uid="/Settings/LeftPane" />
+                    <RadioMenuFlyoutItem x:Name="MenuViewQuickNote1" Tag="1" x:Uid="/Settings/Bottom" />
+                    <RadioMenuFlyoutItem x:Name="MenuViewQuickNote2" Tag="2" x:Uid="/Settings/Hidden" />
+                </MenuFlyoutSubItem>
+                <ToggleMenuFlyoutItem x:Uid="MenuViewShowCount" IsChecked="{x:Bind settings:AppSettings.Instance.ShowDairyCount,Mode=TwoWay}" />
+                <ToggleMenuFlyoutItem x:Uid="MenuViewShowTab" IsChecked="{x:Bind settings:AppSettings.Instance.ShowTab,Mode=TwoWay}" />
+            </MenuBarItem>
+        </MenuBar>
+        <!--#endregion-->
+
+        <Button Style="{StaticResource CustomTitleBarSettingsButtonStyle}" HorizontalAlignment="Right" Margin="0,0,40,0" Click="OnDebugClick" Visibility="Collapsed" />
+        <Button Style="{StaticResource CustomTitleBarSettingsButtonStyle}" HorizontalAlignment="Right" Margin="0,0,4,0" Click="OnSettingsClick" />
+
+        <UserControl x:Name="MainUserControl" Grid.Row="1">
+            <SplitView x:Name="MainSplitView" OpenPaneLength="300" CornerRadius="0,8,8,0">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="PaneStates">
+                        <VisualState x:Name="PaneModeInline">
+                            <VisualState.Setters>
+                                <Setter Target="MainSplitView.DisplayMode" Value="Inline" />
+                                <Setter Target="MainSplitView.PaneBackground" Value="{ThemeResource ContentBackgroundBrush}" />
+                                <Setter Target="MainSplitView.BorderThickness" Value="0" />
+                                <Setter Target="MainSplitView.CornerRadius" Value="0" />
+                                <Setter Target="PaneGrid.Padding" Value="8,8,0,8" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="PaneModeOverlay">
+                            <VisualState.Setters>
+                                <Setter Target="MainSplitView.DisplayMode" Value="Overlay" />
+                                <Setter Target="MainSplitView.PaneBackground" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                                <Setter Target="MainSplitView.BorderThickness" Value="0,0,1,0" />
+                                <Setter Target="PaneGrid.Padding" Value="8" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="QuickNoteStates">
+                        <VisualState x:Name="QuickNoteLeftPane">
+                            <VisualState.Setters>
+                                <Setter Target="QuickNoteBottomGroup.Visibility" Value="Collapsed" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="QuickNoteBottom">
+                            <VisualState.Setters>
+                                <Setter Target="QuickNoteLeftPaneGroup.Visibility" Value="Collapsed" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="QuickNoteHidden">
+                            <VisualState.Setters>
+                                <Setter Target="QuickNoteBottomGroup.Visibility" Value="Collapsed" />
+                                <Setter Target="QuickNoteLeftPaneGroup.Visibility" Value="Collapsed" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <SplitView.Pane>
+                    <Grid x:Name="PaneGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!--#region Search Box -->
+                        <AutoSuggestBox x:Name="ContentSuggestBox" x:Uid="SuggestBox" QueryIcon="Find" Margin="0,0,0,8" Visibility="Collapsed" />
+                        <!--#endregion-->
+                        
+                        <!--#region Dairy List -->
+                        <ContentPresenter Grid.Row="1" x:Name="ContentViewPresenter" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" CornerRadius="4" BorderThickness="1">
+                            <ContentPresenter.Tag>
+                                <common:ObjectCollection>
+                                    <TreeView x:Name="ContentViewTreeView" SelectionMode="Single" AllowDrop="False" CanDragItems="False"
+                                              ItemTemplateSelector="{StaticResource DairyTreeViewItemSelector}"
+                                              ContextFlyout="{StaticResource DairyFileFlyout}"
+                                              ItemInvoked="ContentViewTreeView_ItemInvoked">
+                                        <TreeView.ItemContainerTransitions>
+                                            <TransitionCollection>
+                                                <AddDeleteThemeTransition />
+                                            </TransitionCollection>
+                                        </TreeView.ItemContainerTransitions>
+                                    </TreeView>
+                                    <controls:DoubleListView x:Name="ContentViewDoubleListView" ListHeight="2*"
+                                                             InnerItemsSource="{x:Bind ((models:DairyDay)ContentViewDoubleListView.SelectedItem).Texts,Mode=OneWay}"
+                                                             InnerSelectionChanged="ContentViewDoubleListView_InnerSelectionChanged"
+                                                             ItemTemplate="{StaticResource DairyDayListViewItemTemplate}"
+                                                             InnerItemTemplate="{StaticResource DairyTextListViewItemTemplate}"
+                                                             BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                                                             ContextFlyout="{StaticResource DairyFileFlyout}">
+                                        <controls:DoubleListView.NoInnerContent>
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4">
+                                                <TextBlock x:Uid="NoInnerContent" Style="{StaticResource BodyLargeTextBlockStyle}" />
+                                                <FontIcon Glyph="&#xE890;" FontSize="32" />
+                                            </StackPanel>
+                                        </controls:DoubleListView.NoInnerContent>
+                                        <controls:DoubleListView.InnerContent>
+                                            <Border Height="32" HorizontalAlignment="Center">
+                                                <TextBlock Text="{x:Bind helpers:XamlHelper.GetDairyDate(ContentViewDoubleListView.SelectedItem),Mode=OneWay}"
+                                                           Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center" />
+                                            </Border>
+                                        </controls:DoubleListView.InnerContent>
+                                        <controls:DoubleListView.InnerBottomContent>
+                                            <Button BorderThickness="0" Margin="4" Background="Transparent" Height="32" HorizontalAlignment="Stretch" Click="OnCreateNewTextInDoubleList">
+                                                <Grid ColumnSpacing="4">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <FontIcon FontSize="16" Glyph="&#xECC8;" />
+                                                    <TextBlock Grid.Column="1" x:Uid="FlyoutNewText" />
+                                                </Grid>
+                                            </Button>
+                                        </controls:DoubleListView.InnerBottomContent>
+                                    </controls:DoubleListView>
+                                </common:ObjectCollection>
+                            </ContentPresenter.Tag>
+                        </ContentPresenter>
+                        <!--#endregion-->
+                        
+                        <!--#region Quick Note Left Pane -->
+                        <controls:GroupBox x:Name="QuickNoteLeftPaneGroup" Grid.Row="2" Margin="0,8,0,0" x:Uid="/Note/Header">
+                            <Grid RowSpacing="8" ColumnSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="QuickNoteBox" Grid.ColumnSpan="2" x:Uid="/Note/YourNote" />
+
+                                <Button Grid.Row="1" x:Uid="/Note/ViewAll" HorizontalAlignment="Stretch" Click="OnViewAllClicked" />
+                                <controls:FeedbackButton Grid.Row="1" Grid.Column="1" x:Uid="/Note/Save"
+                                                         Style="{StaticResource AccentFeedbackButtonStyle}"
+                                                         IsEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(QuickNoteBox.Text),Mode=OneWay}"
+                                                         HorizontalAlignment="Stretch" FeedbackClick="OnCreateNewNote">
+                                    <controls:FeedbackButton.FeedBackContent>
+                                        <Grid ColumnSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <FontIcon FontSize="16" Glyph="&#xE8FB;" />
+                                            <TextBlock Grid.Column="1" x:Uid="/Note/Saved" />
+                                        </Grid>
+                                    </controls:FeedbackButton.FeedBackContent>
+                                </controls:FeedbackButton>
+                            </Grid>
+                        </controls:GroupBox>
+                        <!--#endregion-->
+                    </Grid>
+                </SplitView.Pane>
+                <!--#region Main Content -->
+                <Grid x:Name="ContentGrid" Background="{ThemeResource ContentBackgroundBrush}" Grid.Column="1" Grid.RowSpan="3" Padding="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TabView x:Name="MainTabView"
+                             IsAddTabButtonVisible="False"
+                             CloseButtonOverlayMode="Always"
+                             TabCloseRequested="MainTabView_TabCloseRequested"
+                             SelectionChanged="MainTabView_SelectionChanged"
+                             SelectedItem="{x:Bind ViewModel.CurrentText,Mode=OneWay}">
+                        <TabView.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="Default">
+                                        <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="SolidBackgroundFillColorSecondaryBrush" />
+                                        <StaticResource x:Key="TabViewItemHeaderDragBackground" ResourceKey="SolidBackgroundFillColorSecondaryBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="Light">
+                                        <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="SolidBackgroundFillColorSecondaryBrush" />
+                                        <StaticResource x:Key="TabViewItemHeaderDragBackground" ResourceKey="SolidBackgroundFillColorSecondaryBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="HighContrast">
+                                        <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="SystemColorWindowColorBrush" />
+                                        <StaticResource x:Key="TabViewItemHeaderDragBackground" ResourceKey="SystemColorWindowColorBrush" />
+                                    </ResourceDictionary>
+                                </ResourceDictionary.ThemeDictionaries>
+                            </ResourceDictionary>
+                        </TabView.Resources>
+                        <TabView.TabItemTemplate>
+                            <DataTemplate x:DataType="models:DairyText">
+                                <TabViewItem>
+                                    <TabViewItem.IconSource>
+                                        <FontIconSource Glyph="&#xE8A5;" />
+                                    </TabViewItem.IconSource>
+                                    <TabViewItem.Header>
+                                        <TextBlock>
+                                            <Run Text="{x:Bind helpers:XamlHelper.IsSavedToGlyph(IsSaved),Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /><Run Text="{x:Bind Title,Mode=OneWay}" />
+                                        </TextBlock>
+                                    </TabViewItem.Header>
+                                </TabViewItem>
+                            </DataTemplate>
+                        </TabView.TabItemTemplate>
+                    </TabView>
+
+                    <controls:DataPresenter Grid.Row="1" x:Name="MainPresenter" Data="{x:Bind ViewModel.CurrentText,Mode=OneWay}" Padding="8,4">
+                        <controls:DataPresenter.DataTemplate>
+                            <DataTemplate x:DataType="models:DairyText">
+                                <!-- Dairy Text Presenter -->
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBox Text="{x:Bind Title,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource EditModeTextBox}" FontSize="28" FontWeight="SemiBold" />
+                                    <TextBox Grid.Row="1" Text="{x:Bind Body,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource EditModeTextBox}" AcceptsReturn="True" TextWrapping="Wrap" IsSpellCheckEnabled="False" />
+
+                                    <StackPanel Grid.Row="2">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Uid="DescriptionProperty" Style="{StaticResource LowlightTextBlock}" />
+                                            <TextBox Grid.Column="1" Text="{x:Bind Description,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource EditModeTextBox}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                        </Grid>
+                                        <TextBlock Style="{StaticResource LowlightTextBlock}" IsTextSelectionEnabled="True">
+                                            <Run x:Uid="CreateTime" /><Run Text="{x:Bind helpers:XamlHelper.DateAndTimeToString(SourceDate, CreateTime),Mode=OneTime}" />
+                                        </TextBlock>
+                                        <TextBlock Style="{StaticResource LowlightTextBlock}" IsTextSelectionEnabled="True">
+                                            <Run x:Uid="LastEditTime" /><Run Text="{x:Bind helpers:XamlHelper.DateTimeToString(LastEditTime),Mode=OneWay}" />
+                                        </TextBlock>
+                                        <TextBlock x:Uid="DairyIsTimeApproximate" Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                                   FontSize="12" IsTextSelectionEnabled="True" Visibility="{x:Bind helpers:XamlHelper.ToVisible(IsTimeApproximate),Mode=OneWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </controls:DataPresenter.DataTemplate>
+                        <controls:DataPresenter.ExtraContent>
+                            <!-- File Info Content -->
+                            <ScrollViewer>
+                                <StackPanel Spacing="8" Margin="8">
+                                    <Grid>
+                                        <TextBlock x:Uid="FileInfoBase" Style="{StaticResource SubtitleTextBlockStyle}" />
+                                        <Button HorizontalAlignment="Right" Width="120" Click="OnEditFileInfo">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon FontSize="16" Glyph="&#xE70F;" />
+                                                <TextBlock Grid.Column="1" x:Uid="FileInfoBaseEdit" />
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+
+                                    <controls:HeaderTextBlock x:Uid="FileInfoBaseName" x:Name="FileInfoBaseName" />
+                                    <controls:HeaderTextBlock x:Uid="FileInfoBaseAuthor" x:Name="FileInfoBaseAuthor" />
+                                    <controls:HeaderTextBlock x:Uid="FileInfoBaseDescription" x:Name="FileInfoBaseDescription" />
+                                    <controls:HeaderTextBlock x:Uid="FileInfoBaseTotalText" x:Name="FileInfoBaseTotalText" />
+
+                                    <TextBlock x:Uid="FileInfoTime" Margin="0,8,0,0" Style="{StaticResource SubtitleTextBlockStyle}" />
+
+                                    <controls:HeaderTextBlock x:Uid="FileInfoTimeCreate" x:Name="FileInfoTimeCreate" />
+                                    <controls:HeaderTextBlock x:Uid="FileInfoTimeLastEdit" x:Name="FileInfoTimeLastEdit" />
+
+                                    <TextBlock x:Uid="FileInfoEncrypt" Margin="0,8,0,0" Style="{StaticResource SubtitleTextBlockStyle}" />
+
+                                    <TextBlock x:Name="FileInfoEncryptInfo" Style="{StaticResource LowlightBodyTextBlock}" />
+
+                                    <Button x:Name="FileInfoNotEncryptedPart" MinWidth="120" Click="OnSetPassword" Style="{StaticResource AccentButtonStyle}">
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon FontSize="16" Glyph="&#xE8D7;" />
+                                            <TextBlock Grid.Column="1" x:Uid="FileInfoSetPassword" />
+                                        </Grid>
+                                    </Button>
+
+                                    <Grid x:Name="FileInfoEncryptedPart" ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button MinWidth="120" Click="OnChangePassword">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon FontSize="16" Glyph="&#xE8D7;" />
+                                                <TextBlock Grid.Column="1" x:Uid="FileInfoChangePassword" />
+                                            </Grid>
+                                        </Button>
+                                        <Button Grid.Column="1" MinWidth="120" Click="OnRemovePassword">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon FontSize="16" Glyph="&#xE738;" />
+                                                <TextBlock Grid.Column="1" x:Uid="FileInfoRemovePassword" />
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </controls:DataPresenter.ExtraContent>
+                    </controls:DataPresenter>
+
+                    <CommandBar Grid.Row="2" DefaultLabelPosition="Right">
+                        <AppBarButton x:Uid="CommandNewDay" Icon="Add" Click="OnCreateNewDay"
+                                      Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.HasCurrentFile),Mode=OneWay}" />
+                        <AppBarButton x:Uid="CommandNewText" Icon="{markup:FontIcon Glyph=&#xECC8;}" Click="OnCreateNewText"
+                                      Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.HasCurrentFile),Mode=OneWay}" />
+                        <AppBarButton x:Uid="CommandFileInfo" Icon="More" Click="OnMenuFileInfoClick"
+                                      Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.HasCurrentFile),Mode=OneWay}" />
+                        <AppBarButton x:Uid="CommandUndo" Icon="Undo" Click="OnUndo"
+                                      Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.CanUndo),Mode=OneWay}" />
+                        <AppBarButton x:Uid="CommandRedo" Icon="Redo" Click="OnRedo"
+                                      Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.CanRedo),Mode=OneWay}" />
+                        <CommandBar.SecondaryCommands>
+                            <AppBarToggleButton x:Uid="CommandApproximate" Icon="{markup:FontIcon Glyph=&#xEC92;}"
+                                                IsChecked="{x:Bind ViewModel.CurrentText.IsTimeApproximate,Mode=TwoWay}"
+                                                Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.HasCurrentText),Mode=OneWay}" />
+                            <AppBarButton x:Uid="CommandDeleteText" Icon="Delete" Click="OnDeleteText"
+                                          Visibility="{x:Bind helpers:XamlHelper.ToVisible(ViewModel.HasCurrentText),Mode=OneWay}" />
+                        </CommandBar.SecondaryCommands>
+                    </CommandBar>
+
+                    <Grid x:Name="QuickNoteBottomGroup" Grid.Row="3" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Text="{x:Bind QuickNoteBox.Text,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" x:Uid="/Note/YourNote" />
+                        <Button Grid.Column="1" x:Uid="/Note/ViewAll" HorizontalAlignment="Stretch" Click="OnViewAllClicked" />
+                        <controls:FeedbackButton Grid.Column="2" x:Uid="/Note/Save" Style="{StaticResource AccentFeedbackButtonStyle}"
+                                                 IsEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(QuickNoteBox.Text),Mode=OneWay}"
+                                                 HorizontalAlignment="Stretch" FeedbackClick="OnCreateNewNote">
+                            <controls:FeedbackButton.FeedBackContent>
+                                <Grid ColumnSpacing="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <FontIcon FontSize="16" Glyph="&#xE8FB;" />
+                                    <TextBlock Grid.Column="1" x:Uid="/Note/Saved" />
+                                </Grid>
+                            </controls:FeedbackButton.FeedBackContent>
+                        </controls:FeedbackButton>
+                    </Grid>
+                </Grid>
+                <!--#endregion-->
+            </SplitView>
+        </UserControl>
+    </Grid>
+</Page>
