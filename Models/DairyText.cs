@@ -82,6 +82,7 @@ public partial class DairyText : ObservableObject
     }
 
     private bool _isSaved = true;
+
     [JsonIgnore]
     public bool IsSaved
     {
@@ -126,6 +127,7 @@ public partial class DairyText : ObservableObject
             IsSaved = true;
         }
     }
+
     // To do: JsonConstructor
     [JsonConstructor]
     public DairyText(string title, string description, string body, bool isTimeApproximate, TimeOnly? createTime, DateTime lastEditTime)

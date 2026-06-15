@@ -211,7 +211,7 @@
     <value>保存</value>
   </data>
   <data name="SuggestBox.PlaceholderText" xml:space="preserve">
-    <value>搜索</value>
+    <value>搜索日期或标题</value>
   </data>
   <data name="Unsave.Text" xml:space="preserve">
     <value>不保存</value>
@@ -407,5 +407,54 @@
   </data>
   <data name="ChangePasswordDialog.Title" xml:space="preserve">
     <value>修改密码</value>
+  </data>
+  <data name="FlyoutOpenNewWindow.Text" xml:space="preserve">
+    <value>在新窗口中打开</value>
+  </data>
+  <data name="CommandNewWindow.Label" xml:space="preserve">
+    <value>在新窗口中打开</value>
+  </data>
+  <data name="CommandReturnMain.Label" xml:space="preserve">
+    <value>回到主页面</value>
+  </data>
+  <data name="SearchResultDate.Header" xml:space="preserve">
+    <value>匹配的日期</value>
+  </data>
+  <data name="SearchResultTitle.Header" xml:space="preserve">
+    <value>匹配的标题</value>
+  </data>
+  <data name="SearchNoResult.Text" xml:space="preserve">
+    <value>没有搜索结果匹配</value>
+  </data>
+  <data name="ExportPasswordDialog.Title" xml:space="preserve">
+    <value>导出到文件</value>
+  </data>
+  <data name="MenuFileExport.Text" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="MenuHelp.Title" xml:space="preserve">
+    <value>帮助</value>
+  </data>
+  <data name="MenuHelpAbout.Text" xml:space="preserve">
+    <value>关于 MyDairy</value>
+  </data>
+  <data name="AboutMyDairy.Text" xml:space="preserve">
+    <value>一个基于 WinUI 3 开发的本地加密日记应用</value>
+  </data>
+  <data name="AboutEncrypt.Header" xml:space="preserve">
+    <value>加密特性</value>
+  </data>
+  <data name="AboutEncrypt.Text" xml:space="preserve">
+    <value>● AES-256-GCM 加密
+● PBKDF2 密钥派生</value>
+  </data>
+  <data name="AboutLicense.Header" xml:space="preserve">
+    <value>使用的许可</value>
+  </data>
+  <data name="AboutVersionFormat" xml:space="preserve">
+    <value>版本：{0}</value>
+  </data>
+  <data name="CurrentWordCount.Text" xml:space="preserve">
+    <value>当前字数：</value>
   </data>
 </root>

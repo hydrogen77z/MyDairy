@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -12,11 +11,14 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using MyDairy.Common;
+using MyDairy.Helpers;
 using MyDairy.Models;
+using MyDairy.Services;
 using MyDairy.Settings;
 using MyDairy.ViewModels;
-using MyDairy.Helpers;
-using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,19 +28,22 @@ namespace MyDairy.Views;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class NotePage : Page
+public sealed partial class NotePage : Page, ISupportContainedInWindow
 {
-    //public NoteViewModel ViewModel
-    //{
-    //    get;
-    //}
-
     private Note _currentNote = null;
+    private bool _inWindow = false;
+
+    public static NotePage Instance
+    {
+        get;
+        private set;
+    } = null;
+
     public NotePage()
     {
         InitializeComponent();
 
-        //ViewModel = new();
+        Instance = this;
         UpdateButton();
     }
 
@@ -50,8 +55,8 @@ public sealed partial class NotePage : Page
     private void UpdateButton()
     {
         var hasValue = _currentNote != null;
-        EditCommand.Visibility = XamlHelper.ToVisible(hasValue);
-        DeleteCommand.Visibility = XamlHelper.ToVisible(hasValue);
+        CommandEdit.Visibility = XamlHelper.ToVisible(hasValue);
+        CommandDelete.Visibility = XamlHelper.ToVisible(hasValue);
     }
 
     private void OnDeleteNoteContext(object sender, RoutedEventArgs e)
@@ -73,7 +78,7 @@ public sealed partial class NotePage : Page
     private async void OnNewNote(object sender, RoutedEventArgs e)
     {
         NewNoteBox.Text = string.Empty;
-        if (ContentDialogResult.Primary == await NewNoteDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(NewNoteDialog, XamlRoot))
         {
             QuickNoteHelper.AddNote(NewNoteBox.Text);
         }
@@ -95,7 +100,7 @@ public sealed partial class NotePage : Page
         EditNoteBox.Focus(FocusState.Keyboard);
         EditNoteBox.Select(note.Content.Length, 0);
 
-        if (ContentDialogResult.Primary == await EditNoteDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(EditNoteDialog, XamlRoot))
         {
             QuickNoteHelper.EditNote(note, EditNoteBox.Text);
         }
@@ -105,5 +110,27 @@ public sealed partial class NotePage : Page
     {
         _currentNote = NoteList.SelectedItem as Note;
         UpdateButton();
+    }
+
+    public string Title => "Header/Header".GetLocalized("Note");
+
+    public event EventHandler TitleChanged;
+
+    public bool GetIsBackButtonVisible() => _inWindow;
+    public void OnBackRequested() => App.Window.OpenNotePage(false);
+    public void SetContainToWindow(bool inWindow)
+    {
+        _inWindow = inWindow;
+        CommandNewWindow.Visibility = XamlHelper.ToCollapsed(_inWindow);
+        CommandReturn.Visibility = XamlHelper.ToVisible(_inWindow);
+    }
+
+    private void OnOpenInNewWindow(object sender, RoutedEventArgs e)
+    {
+        App.Window.OpenNotePage(true);
+    }
+    private void OnReturnMainPage(object sender, RoutedEventArgs e)
+    {
+        App.Window.OpenNotePage(false);
     }
 }

@@ -28,17 +28,7 @@ public partial class DairyDay : ObservableObject
     } = [];
 
     [JsonIgnore]
-    public string CountString
-    {
-        get
-        {
-            if (AppSettings.Instance.ShowDairyCount)
-            {
-                return $"({Texts.Count})";
-            }
-            return string.Empty;
-        }
-    }
+    public string CountString => AppSettings.Instance.ShowDairyCount ? $"({Texts.Count})" : string.Empty;
 
     public override string ToString() => XamlHelper.DateOnlyToString(Date);
 

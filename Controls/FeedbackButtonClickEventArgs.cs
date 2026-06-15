@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyDairy.Controls;
 
-public class FeedbackButtonClickEventArgs
+public partial class FeedbackButtonClickEventArgs : EventArgs
 {
     public bool BeginStoryboard
     {

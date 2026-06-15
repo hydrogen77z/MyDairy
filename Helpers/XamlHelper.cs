@@ -82,4 +82,6 @@ public static class XamlHelper
     {
         return value || visible == Visibility.Collapsed;
     }
+
+    public static string WordCount(string value) => value.Length.ToString();
 }

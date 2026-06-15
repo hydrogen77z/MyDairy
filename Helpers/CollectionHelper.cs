@@ -8,14 +8,14 @@ using MyDairy.Common;
 namespace MyDairy.Helpers;
 public static class CollectionHelper
 {
-    public static void UpdateCollectionNoClear<T>(IList<T> oldItems, IReadOnlyList<T> newItems, Action<T> oldItemsChanging)
+    public static void UpdateCollectionNoClear<T>(IList<T> targetList, IReadOnlyList<T> newItems, Action<T> oldItemsChanging = null)
     {
         var i = 0;
-        while (i < oldItems.Count)
+        while (i < targetList.Count)
         {
-            if (!newItems.Contains(oldItems[i]))
+            if (!newItems.Contains(targetList[i]))
             {
-                oldItems.RemoveAt(i);
+                targetList.RemoveAt(i);
                 continue;
             }
             i++;
@@ -23,7 +23,7 @@ public static class CollectionHelper
 
         if (oldItemsChanging is not null)
         {
-            foreach (var item in oldItems)
+            foreach (var item in targetList)
             {
                 oldItemsChanging(item);
             }
@@ -31,15 +31,15 @@ public static class CollectionHelper
 
         for (i = 0; i < newItems.Count; i++)
         {
-            if (!oldItems.Contains(newItems[i]))
+            if (!targetList.Contains(newItems[i]))
             {
-                if (i > oldItems.Count)
+                if (i > targetList.Count)
                 {
-                    oldItems.Add(newItems[i]);
+                    targetList.Add(newItems[i]);
                 }
                 else
                 {
-                    oldItems.Insert(i, newItems[i]);
+                    targetList.Insert(i, newItems[i]);
                 }
             }
         }

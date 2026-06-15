@@ -82,12 +82,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="WrappedTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
-        <Setter Property="IsSpellCheckEnabled" Value="False" />
-        <Setter Property="AcceptsReturn" Value="True" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-    </Style>
-
     <Style x:Key="EditModeTextBox" TargetType="TextBox">
         <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
         <Setter Property="Background" Value="Transparent" />
@@ -123,7 +117,7 @@
                                         <!--<Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundDisabled}" />-->
                                         <!--<Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushDisabled}" />-->
                                         <Setter Target="ContentElement.Foreground" Value="{ThemeResource TextControlForegroundDisabled}" />
-                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundDisabled}}" />
+                                        <!--<Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundDisabled}}" />-->
                                     </VisualState.Setters>
                                 </VisualState>
 
@@ -131,13 +125,13 @@
                                     <VisualState.Setters>
                                         <!--<Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushPointerOver}" />-->
                                         <!--<Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundPointerOver}" />-->
-                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundPointerOver}}" />
+                                        <!--<Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundPointerOver}}" />-->
                                         <Setter Target="ContentElement.Foreground" Value="{ThemeResource TextControlForegroundPointerOver}" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Focused">
                                     <VisualState.Setters>
-                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundFocused}}" />
+                                        <!--<Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundFocused}}" />-->
                                         <!--<Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundFocused}" />-->
                                         <!--<Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushFocused}" />-->
                                         <!--<Setter Target="BorderElement.BorderThickness" Value="{ThemeResource TextControlBorderThemeThicknessFocused}" />-->
@@ -180,7 +174,9 @@
                                       Margin="0,1,0,0"
                                       MinHeight="{TemplateBinding MinHeight}"
                                       IsTabStop="False" AutomationProperties.AccessibilityView="Raw" ZoomMode="Disabled" />
-                        <TextBlock x:Name="PlaceholderTextContentPresenter" Grid.Row="1" Grid.ColumnSpan="2" Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Text="{TemplateBinding PlaceholderText}" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" IsHitTestVisible="False" />
+                        <!--<TextBlock x:Name="PlaceholderTextContentPresenter" Grid.Row="1" Grid.ColumnSpan="2"
+                                   Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
+                                   Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Text="{TemplateBinding PlaceholderText}" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" IsHitTestVisible="False" />-->
                         <!--<Button x:Name="DeleteButton" Grid.Row="1" Grid.Column="1" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{ThemeResource HelperButtonThemePadding}" IsTabStop="False" Visibility="Collapsed" AutomationProperties.AccessibilityView="Raw" FontSize="{TemplateBinding FontSize}" Width="30" VerticalAlignment="Stretch" />-->
                         <!--<ContentPresenter x:Name="DescriptionPresenter"
                                           Grid.Column="0"
@@ -190,6 +186,696 @@
                                           AutomationProperties.AccessibilityView="Raw"
                                           x:Load="False"/>-->
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        I am trying to optimize these styles, but I am unsure whether to keep them.
+        I attempted to replace these Storyboards with KeyTime=0 with Setters.
+        (DefaultButtonStyle, AccentButtonStyle, DefaultTextBoxStyle)
+    -->
+    <Style x:Key="DefaultButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
+        <Setter Property="Padding" Value="{StaticResource ButtonPadding}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter x:Name="ContentPresenter" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" BackgroundSizing="{TemplateBinding BackgroundSizing}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw" local:AnimatedIcon.State="Normal" xmlns:local="using:Microsoft.UI.Xaml.Controls">
+                        <ContentPresenter.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.083" />
+                        </ContentPresenter.BackgroundTransition>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPointerOver}" />
+                                        <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="PointerOver" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource ButtonBackgroundPressed}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}" />
+                                        <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="Pressed" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource ButtonBackgroundDisabled}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonBorderBrushDisabled}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundDisabled}" />
+                                        <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
+                                        <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="Normal" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AccentButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
+        <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
+        <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+        <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter x:Name="ContentPresenter" Background="{TemplateBinding Background}" BackgroundSizing="{TemplateBinding BackgroundSizing}" Foreground="{TemplateBinding Foreground}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw">
+                        <!--<ContentPresenter.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.083" />
+                        </ContentPresenter.BackgroundTransition>-->
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource AccentButtonBackgroundPointerOver}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource AccentButtonBorderBrushPointerOver}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AccentButtonForegroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource AccentButtonBackgroundPressed}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource AccentButtonBorderBrushPressed}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AccentButtonForegroundPressed}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Background" Value="{ThemeResource AccentButtonBackgroundDisabled}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource AccentButtonBorderBrushDisabled}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AccentButtonForegroundDisabled}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}" />
+
+    <Style x:Key="DefaultTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
+        <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
+        <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+        <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
+        <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
+        <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}" />
+        <Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Grid.Resources>
+                            <Style x:Name="DeleteButtonStyle" TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid x:Name="ButtonLayoutGrid" Margin="{ThemeResource TextBoxInnerButtonMargin}" BorderBrush="{ThemeResource TextControlButtonBorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{ThemeResource TextControlButtonBackground}" BackgroundSizing="{TemplateBinding BackgroundSizing}" CornerRadius="{TemplateBinding CornerRadius}">
+
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal" />
+
+                                                        <VisualState x:Name="PointerOver">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="ButtonLayoutGrid.Background" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
+                                                                <Setter Target="ButtonLayoutGrid.BorderBrush" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
+                                                                <Setter Target="GlyphElement.Foreground" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Pressed">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="ButtonLayoutGrid.Background" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
+                                                                <Setter Target="ButtonLayoutGrid.BorderBrush" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
+                                                                <Setter Target="GlyphElement.Foreground" Value="{ThemeResource TextControlButtonForegroundPressed}" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Disabled">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="ButtonLayoutGrid.Opacity" Value="0" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                                <TextBlock x:Name="GlyphElement" Foreground="{ThemeResource TextControlButtonForeground}" VerticalAlignment="Center" HorizontalAlignment="Center" FontStyle="Normal" FontSize="{ThemeResource TextBoxIconFontSize}" Text="&#xE894;" FontFamily="{ThemeResource SymbolThemeFontFamily}" IsTextScaleFactorEnabled="False" AutomationProperties.AccessibilityView="Raw" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="HeaderContentPresenter.Foreground" Value="{ThemeResource TextControlHeaderForegroundDisabled}" />
+                                        <Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundDisabled}" />
+                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushDisabled}" />
+                                        <Setter Target="ContentElement.Foreground" Value="{ThemeResource TextControlForegroundDisabled}" />
+                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{ThemeResource TextControlPlaceholderForegroundDisabled}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushPointerOver}" />
+                                        <Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundPointerOver}" />
+                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
+                                        <Setter Target="ContentElement.Foreground" Value="{ThemeResource TextControlForegroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="PlaceholderTextContentPresenter.Foreground" Value="{ThemeResource TextControlPlaceholderForegroundFocused}" />
+                                        <Setter Target="BorderElement.Background" Value="{ThemeResource TextControlBackgroundFocused}" />
+                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource TextControlBorderBrushFocused}" />
+                                        <Setter Target="BorderElement.BorderThickness" Value="{ThemeResource TextControlBorderThemeThicknessFocused}" />
+                                        <Setter Target="ContentElement.Foreground" Value="{ThemeResource TextControlForegroundFocused}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ButtonStates">
+                                <VisualState x:Name="ButtonVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="DeleteButton.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="ButtonCollapsed" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="HeaderContentPresenter" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}" FontWeight="Normal" Foreground="{ThemeResource TextControlHeaderForeground}" Margin="{ThemeResource TextBoxTopHeaderMargin}" TextWrapping="Wrap" VerticalAlignment="Top" Visibility="Collapsed" x:DeferLoadStrategy="Lazy" />
+                        <Border x:Name="BorderElement" Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Control.IsTemplateFocusTarget="True" MinWidth="{TemplateBinding MinWidth}" MinHeight="{TemplateBinding MinHeight}" />
+                        <ScrollViewer x:Name="ContentElement" Grid.Row="1" Grid.Column="0" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}" IsTabStop="False" AutomationProperties.AccessibilityView="Raw" ZoomMode="Disabled" />
+                        <TextBlock x:Name="PlaceholderTextContentPresenter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Foreground="{ThemeResource TextControlPlaceholderForeground}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Text="{TemplateBinding PlaceholderText}" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" IsHitTestVisible="False" />
+                        <Button x:Name="DeleteButton" Grid.Row="1" Grid.Column="1" Style="{StaticResource DeleteButtonStyle}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{ThemeResource HelperButtonThemePadding}" IsTabStop="False" Visibility="Collapsed" AutomationProperties.AccessibilityView="Raw" FontSize="{TemplateBinding FontSize}" Width="30" VerticalAlignment="Stretch" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
+
+    <Style x:Key="WrappedTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+        <Setter Property="IsSpellCheckEnabled" Value="False" />
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="DefaultCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Background" Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
+        <Setter Property="Foreground" Value="{ThemeResource CheckBoxForegroundUnchecked}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
+        <Setter Property="Padding" Value="{StaticResource CheckBoxPadding}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="MinWidth" Value="{StaticResource CheckBoxMinWidth}" />
+        <Setter Property="MinHeight" Value="{StaticResource CheckBoxHeight}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin" Value="{StaticResource CheckBoxFocusVisualMargin}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid x:Name="RootGrid"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}" >
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CombinedStates">
+                                <VisualState x:Name="UncheckedNormal" />
+                                <VisualState x:Name="UncheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundUncheckedPointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundUncheckedPointerOver}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUncheckedPointerOver}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="UncheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundUncheckedPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundUncheckedPressed}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUncheckedPressed}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPressed}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PressedOff" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="UncheckedDisabled">
+
+                                    <Storyboard>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundUncheckedDisabled}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundUncheckedDisabled}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUncheckedDisabled}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedDisabled}" />
+                                        <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="NormalOff" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedNormal">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundChecked}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundChecked}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushChecked}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeChecked}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundChecked}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="NormalOn" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundCheckedPointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundCheckedPointerOver}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushCheckedPointerOver}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedPointerOver}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PointerOverOn" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundCheckedPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundCheckedPressed}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushCheckedPressed}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPressed}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedPressed}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPressed}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PressedOn" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundCheckedDisabled}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundCheckedDisabled}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushCheckedDisabled}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedDisabled}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedDisabled}" />
+                                        <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="NormalOn" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminateNormal">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundIndeterminate}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundIndeterminate}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushIndeterminate}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminate}" />
+                                        <Setter Target="DownLevelCheckGlyph.Glyph" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminate}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="NormalIndeterminate" />
+                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminatePointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundIndeterminatePointerOver}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundIndeterminatePointerOver}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushIndeterminatePointerOver}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
+                                        <Setter Target="DownLevelCheckGlyph.Glyph" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PointerOverIndeterminate" />
+                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminatePressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundIndeterminatePressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundIndeterminatePressed}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushIndeterminatePressed}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
+                                        <Setter Target="DownLevelCheckGlyph.Glyph" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" />
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="PressedIndeterminate" />
+                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IndeterminateDisabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource CheckBoxForegroundIndeterminateDisabled}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CheckBoxBackgroundIndeterminateDisabled}" />
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource CheckBoxBorderBrushIndeterminateDisabled}" />
+                                        <Setter Target="NormalRectangle.Stroke" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
+                                        <Setter Target="NormalRectangle.Fill" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
+                                        <Setter Target="DownLevelCheckGlyph.Glyph" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                        <Setter Target="CheckGlyph.Foreground" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" />
+                                        <!-- DisabledVisual Should be handled by the control, not the animated icon. -->
+                                        <Setter Target="CheckGlyph.(AnimatedIcon.State)" Value="NormalIndeterminate" />
+                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0" VerticalAlignment="Center" Height="{StaticResource CheckBoxSize}" Width="{StaticResource CheckBoxSize}">
+                            <Rectangle x:Name="NormalRectangle" Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}" Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}" StrokeThickness="{StaticResource CheckBoxBorderThickness}" UseLayoutRounding="False" Height="{StaticResource CheckBoxSize}" Width="{StaticResource CheckBoxSize}" RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                            <AnimatedIcon x:Name="CheckGlyph" Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}" AnimatedIcon.State="NormalOff" Margin="0,1,0,-1">
+                                <animatedvisuals:AnimatedAcceptVisualSource />
+                                <AnimatedIcon.FallbackIconSource>
+                                    <FontIconSource x:Name="DownLevelCheckGlyph" FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{StaticResource CheckBoxCheckedGlyph}" FontSize="{StaticResource CheckBoxGlyphSize}" />
+                                </AnimatedIcon.FallbackIconSource>
+                            </AnimatedIcon>
+                        </Grid>
+                        <ContentPresenter x:Name="ContentPresenter" Grid.Column="1" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw" TextWrapping="Wrap" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}" />
+
+    <SolidColorBrush x:Key="CustomContentDialogBorderBrush" Color="{ThemeResource SystemAccentColor}" />
+
+    <Style x:Key="DefaultContentDialogStyle" TargetType="ContentDialog">
+        <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
+        <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource ContentDialogBorderWidth}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CustomContentDialogBorderBrush}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="PrimaryButtonStyle" Value="{ThemeResource DefaultButtonStyle}" />
+        <Setter Property="SecondaryButtonStyle" Value="{ThemeResource DefaultButtonStyle}" />
+        <Setter Property="CloseButtonStyle" Value="{ThemeResource DefaultButtonStyle}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentDialog">
+                    <Border x:Name="Container">
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DialogShowingStates">
+
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="DialogHidden">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="IsHitTestVisible">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="False" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                                                <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFastAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1.05" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                                                <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFastAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1.05" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                                                <LinearDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="0.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition To="DialogShowing">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
+                                                <SplineDoubleKeyFrame KeyTime="{StaticResource ControlNormalAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
+                                                <SplineDoubleKeyFrame KeyTime="{StaticResource ControlNormalAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
+                                                <LinearDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="DialogHidden" />
+                                <VisualState x:Name="DialogShowing">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.IsTabStop" Value="True" />
+                                        <Setter Target="SecondaryButton.IsTabStop" Value="True" />
+                                        <Setter Target="CloseButton.IsTabStop" Value="True" />
+                                        <Setter Target="LayoutRoot.Visibility" Value="Visible" />
+                                        <Setter Target="BackgroundElement.TabFocusNavigation" Value="Cycle" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="DialogShowingWithoutSmokeLayer">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.IsTabStop" Value="True" />
+                                        <Setter Target="SecondaryButton.IsTabStop" Value="True" />
+                                        <Setter Target="CloseButton.IsTabStop" Value="True" />
+                                        <Setter Target="LayoutRoot.Visibility" Value="Visible" />
+                                        <Setter Target="LayoutRoot.Background" Value="{x:Null}" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DialogSizingStates">
+                                <VisualState x:Name="DefaultDialogSizing" />
+                                <VisualState x:Name="FullDialogSizing">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundElement.VerticalAlignment" Value="Stretch" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ButtonsVisibilityStates">
+                                <VisualState x:Name="AllVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="FirstSpacer.Width" Value="{ThemeResource ContentDialogButtonSpacing}" />
+                                        <Setter Target="SecondaryColumn.Width" Value="*" />
+                                        <Setter Target="SecondaryButton.(Grid.Column)" Value="2" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="NoneVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="CommandSpace.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PrimaryVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.(Grid.Column)" Value="4" />
+                                        <Setter Target="SecondaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="CloseButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="SecondaryButton.(Grid.Column)" Value="4" />
+                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="CloseButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CloseVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <Setter Target="SecondaryButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PrimaryAndSecondaryVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="SecondaryButton.(Grid.Column)" Value="4" />
+                                        <Setter Target="CloseButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PrimaryAndCloseVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="SecondaryButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryAndCloseVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="PrimaryButton.Visibility" Value="Collapsed" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DefaultButtonStates">
+                                <VisualState x:Name="NoDefaultButton" />
+                                <VisualState x:Name="PrimaryAsDefaultButton">
+                                    <VisualState.Setters>
+                                        <!--<Setter Target="PrimaryButton.Style" Value="{StaticResource AccentButtonStyle}" />-->
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryAsDefaultButton">
+                                    <VisualState.Setters>
+                                        <!--<Setter Target="SecondaryButton.Style" Value="{StaticResource AccentButtonStyle}" />-->
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CloseAsDefaultButton">
+                                    <VisualState.Setters>
+                                        <!--<Setter Target="CloseButton.Style" Value="{StaticResource AccentButtonStyle}" />-->
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DialogBorderStates">
+                                <VisualState x:Name="NoBorder" />
+                                <VisualState x:Name="AccentColorBorder">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundElement.BorderBrush" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="LayoutRoot" Visibility="Collapsed">
+                            <Rectangle x:Name="SmokeLayerBackground" Fill="{ThemeResource ContentDialogSmokeFill}" />
+                            <Border x:Name="BackgroundElement" Background="{TemplateBinding Background}" FlowDirection="{TemplateBinding FlowDirection}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" BackgroundSizing="InnerBorderEdge" CornerRadius="{TemplateBinding CornerRadius}" MinWidth="{ThemeResource ContentDialogMinWidth}" MaxWidth="{ThemeResource ContentDialogMaxWidth}" MinHeight="{ThemeResource ContentDialogMinHeight}" MaxHeight="{ThemeResource ContentDialogMaxHeight}" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="ScaleTransform" />
+                                </Border.RenderTransform>
+                                <Grid x:Name="DialogSpace" CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer x:Name="ContentScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" ZoomMode="Disabled" IsTabStop="False">
+                                        <Grid Background="{ThemeResource ContentDialogTopOverlay}" Padding="{ThemeResource ContentDialogPadding}" BorderThickness="{ThemeResource ContentDialogSeparatorThickness}" BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <ContentControl x:Name="Title" Margin="{ThemeResource ContentDialogTitleMargin}" Content="{TemplateBinding Title}" ContentTemplate="{TemplateBinding TitleTemplate}" FontSize="20" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="Left" VerticalAlignment="Top" IsTabStop="False">
+                                                <ContentControl.Template>
+                                                    <ControlTemplate TargetType="ContentControl">
+                                                        <ContentPresenter Content="{TemplateBinding Content}"
+                                                                          MaxLines="2"
+                                                                          TextWrapping="Wrap"
+                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                    </ControlTemplate>
+                                                </ContentControl.Template>
+                                            </ContentControl>
+                                            <ContentPresenter x:Name="Content" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" FontSize="{StaticResource ControlContentThemeFontSize}" FontFamily="{StaticResource ContentControlThemeFontFamily}" Foreground="{TemplateBinding Foreground}" Grid.Row="1" TextWrapping="Wrap" />
+                                        </Grid>
+                                    </ScrollViewer>
+                                    <Grid x:Name="CommandSpace" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" XYFocusKeyboardNavigation="Enabled" Padding="{ThemeResource ContentDialogPadding}" Background="{TemplateBinding Background}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
+                                            <ColumnDefinition x:Name="FirstSpacer" Width="0" />
+                                            <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
+                                            <ColumnDefinition x:Name="SecondSpacer" Width="{ThemeResource ContentDialogButtonSpacing}" />
+                                            <ColumnDefinition x:Name="CloseColumn" Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="PrimaryButton" IsTabStop="False" Content="{TemplateBinding PrimaryButtonText}" IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}" Style="{TemplateBinding PrimaryButtonStyle}" ElementSoundMode="FocusOnly" HorizontalAlignment="Stretch" />
+                                        <Button x:Name="SecondaryButton" IsTabStop="False" Content="{TemplateBinding SecondaryButtonText}" IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}" Style="{TemplateBinding SecondaryButtonStyle}" ElementSoundMode="FocusOnly" HorizontalAlignment="Stretch" />
+                                        <Button x:Name="CloseButton" IsTabStop="False" Grid.Column="4" Content="{TemplateBinding CloseButtonText}" Style="{TemplateBinding CloseButtonStyle}" ElementSoundMode="FocusOnly" HorizontalAlignment="Stretch" />
+                                    </Grid>
+
+                                </Grid>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

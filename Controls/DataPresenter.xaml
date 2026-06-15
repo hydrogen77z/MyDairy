@@ -9,12 +9,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:DataPresenter">
                     <Grid>
+                        <Grid.Resources>
+                            <Storyboard x:Name="ExtraStoryboard">
+                                <DrillInThemeAnimation EntranceTargetName="ExtraPresenter" ExitTargetName="Presenter" />
+                            </Storyboard>
+                        </Grid.Resources>
                         <ContentPresenter x:Name="Presenter"
                                           Padding="{TemplateBinding Padding}"
                                           Content="{TemplateBinding Data}"
                                           ContentTemplate="{TemplateBinding DataTemplate}" />
                         <ContentPresenter x:Name="NoPresenter" Content="{TemplateBinding NoDataContent}" />
-                        <ContentPresenter x:Name="ExtraPresenter" Content="{TemplateBinding ExtraContent}" Visibility="Collapsed" />
+                        <ContentPresenter x:Name="ExtraPresenter" Visibility="Collapsed" />
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DataStates">
@@ -40,9 +45,6 @@
                                         <Setter Target="NoPresenter.Visibility" Value="Collapsed" />
                                         <Setter Target="ExtraPresenter.Visibility" Value="Visible" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <DrillInThemeAnimation EntranceTargetName="ExtraPresenter" ExitTargetName="Presenter" />
-                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>

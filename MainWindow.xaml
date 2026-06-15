@@ -28,13 +28,15 @@
                 <Thickness x:Key="TitleBarIconMargin">0,0,8,0</Thickness>
                 <x:Double x:Key="TitleBarIconMaxWidth">20</x:Double>
                 <x:Double x:Key="TitleBarIconMaxHeight">20</x:Double>
+                <x:Double x:Key="TitleBarLeftHeaderPaddingWidth">4</x:Double>
+                <x:Double x:Key="TitleBarHeaderNegativeInsetPaddingWidth">4</x:Double>
             </TitleBar.Resources>
             <TitleBar.IconSource>
                 <FontIconSource FontFamily="Segoe UI Emoji" Glyph="&#x1F4D3;" FontSize="20" />
             </TitleBar.IconSource>
         </TitleBar>
 
-        <Frame x:Name="ContentFrame" Grid.Row="2">
+        <Frame x:Name="ContentFrame" Grid.Row="2" Navigated="OnFrameNavigated">
             <Frame.ContentTransitions>
                 <TransitionCollection>
                     <NavigationThemeTransition>

@@ -33,6 +33,7 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
 using MyDairy.Services;
+using WinRT;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,14 +42,26 @@ namespace MyDairy;
 
 public sealed partial class MainWindow : Window
 {
-    public WindowService Service
+    private readonly WindowService _service;
+    private readonly MultipleWindowManager _multipleWindowManager;
+
+    public WindowExtendedConfiguration ExtendedConfiguration
+    {
+        get;
+    }
+
+    public Brush MenuBarBrush
+    {
+        get;
+    }
+    public Brush ContentBrush
     {
         get;
     }
 
     public event EventHandler PaneToggleRequested;
 
-    public unsafe MainWindow()
+    public MainWindow()
     {
         InitializeComponent();
 
@@ -60,25 +73,23 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(MainTitleBar);
 
-        HWND hWnd = new((nint)AppWindow.Id.Value);
-        var hInstance = PInvoke.GetModuleHandle((PCWSTR)null);
-        var bigIcon = PInvoke.LoadImage(hInstance, (char*)32512, GDI_IMAGE_TYPE.IMAGE_ICON, 32, 32, IMAGE_FLAGS.LR_DEFAULTCOLOR);
-        var smallIcon = PInvoke.LoadImage(hInstance, (char*)32512, GDI_IMAGE_TYPE.IMAGE_ICON, 16, 16, IMAGE_FLAGS.LR_DEFAULTCOLOR);
-
-        PInvoke.SendMessage(hWnd, PInvoke.WM_SETICON, PInvoke.ICON_SMALL, (nint)smallIcon.Value);
-        PInvoke.SendMessage(hWnd, PInvoke.WM_SETICON, PInvoke.ICON_BIG, (nint)bigIcon.Value);
+        ComponentHelper.SetWindowIcon(this);
 
         // Reversed
-        //PInvoke.SetWindowLong(hWnd, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, PInvoke.GetWindowLong(hWnd, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE) | (int)WINDOW_EX_STYLE.WS_EX_LAYERED /* WS_EX_LAYERED */);
+        //PInvoke.SetWindowLong(hWnd, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE, PInvoke.GetWindowLong(hWnd, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE) | (int)WINDOW_EX_STYLE.WS_EX_LAYERED);
 
-        RootGrid.RequestedTheme = AppSettings.Instance.Theme;
-        Service = new(this)
+        ExtendedConfiguration = new()
         {
-            MinHeight = 500,
-            MinWidth = 600,
             BackdropType = AppSettings.Instance.BackdropType,
+            RequestedTheme = AppSettings.Instance.Theme,
             UseInterceptTitleBarCaptionAreaChanged = true,
         };
+        _service = new(this, ExtendedConfiguration)
+        {
+            MinHeight = 600,
+            MinWidth = 600,
+        };
+        _multipleWindowManager = new();
 
         AppWindow.Closing += OnClosing;
         if (AppSettings.Instance.WindowPosition is RectInt32 rect)
@@ -86,30 +97,39 @@ public sealed partial class MainWindow : Window
             AppWindow.MoveAndResize(rect);
         }
 
-        AppSettings.Instance.PropertyChanged += OnSettingPropertyChanged;
-    }
+        MenuBarBrush = Application.Current.Resources["MenuBarBackgroundBrush"].As<Brush>();
+        ContentBrush = Application.Current.Resources["ContentBackgroundBrush"].As<Brush>();
 
-    private void RecomputeDragRegions()
-    {
-        MainTitleBar.RecomputeDragRegions();
+        MenuBarBrush.Opacity = AppSettings.Instance.MenuBarOpacity;
+        ContentBrush.Opacity = AppSettings.Instance.ContentOpacity;
+
+        AppSettings.Instance.PropertyChanged += OnSettingPropertyChanged;
     }
 
     private void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(AppSettings.Theme))
+        switch (e.PropertyName)
         {
-            RootGrid.RequestedTheme = AppSettings.Instance.Theme;
-        }
-        else if (e.PropertyName == nameof(AppSettings.BackdropType))
-        {
-            Service.BackdropType = AppSettings.Instance.BackdropType;
+            case nameof(AppSettings.MenuBarOpacity):
+                MenuBarBrush.Opacity = AppSettings.Instance.MenuBarOpacity;
+                break;
+            case nameof(AppSettings.ContentOpacity):
+                ContentBrush.Opacity = AppSettings.Instance.ContentOpacity;
+                break;
+            case nameof(AppSettings.BackdropType):
+                ExtendedConfiguration.BackdropType = AppSettings.Instance.BackdropType;
+                break;
+            case nameof(AppSettings.Theme):
+                ExtendedConfiguration.RequestedTheme = AppSettings.Instance.Theme;
+                break;
         }
     }
 
     private void OnClosing(AppWindow sender, AppWindowClosingEventArgs args)
     {
-        AppSettings.Instance.WindowPosition = new(sender.Position.X, sender.Position.Y, sender.Size.Width, sender.Size.Height);
+        _multipleWindowManager.CloseAll();
 
+        AppSettings.Instance.WindowPosition = new(sender.Position.X, sender.Position.Y, sender.Size.Width, sender.Size.Height);
         AppSettings.Instance.Save();
     }
 
@@ -123,21 +143,73 @@ public sealed partial class MainWindow : Window
         ReturnToDairyPage();
     }
 
+    private void OnFrameNavigated(object sender, NavigationEventArgs e)
+    {
+        MainTitleBar.IsBackButtonVisible = e.Content is not DairyPage;
+        MainTitleBar.RecomputeDragRegions();
+    }
+
     public void ReturnToDairyPage()
     {
         ContentFrame.Navigate(typeof(DairyPage));
-
-        MainTitleBar.IsBackButtonVisible = false;
-        RecomputeDragRegions();
     }
-    public void OpenPage(Type type)
+
+    // In C++, No need to make it so complicated.
+    public void OpenPageWithInstance<T>(bool inWindow, SizeInt32 size, T instance) where T : ISupportContainedInWindow, new()
     {
-        ContentFrame.Navigate(type);
+        // The Window existed
+        foreach (var contentWindow in _multipleWindowManager.Windows)
+        {
+            if (contentWindow.GetContent() is T)
+            {
+                if (inWindow)
+                {
+                    contentWindow.Activate();
+                    return;
+                }
+                contentWindow.Close();
+                break;
+            }
+        }
 
-        MainTitleBar.IsBackButtonVisible = true;
-        RecomputeDragRegions();
+        if (inWindow)
+        {
+            if (ContentFrame.Content is T)
+            {
+                ReturnToDairyPage();
+            }
+
+            ContentWindow contentWindow = new();
+            contentWindow.SetContent(instance ?? new());
+            contentWindow.AppWindow.Resize(size);
+            OpenContentWindow(contentWindow);
+
+            return;
+        }
+
+        ContentFrame.Navigate(typeof(T));
+        if (ContentFrame.Content is ISupportContainedInWindow window)
+        {
+            window.SetContainToWindow(false);
+        }
+    }
+    public void OpenNotePage(bool inWindow)
+    {
+        OpenPageWithInstance(inWindow, AppWindow.Size, NotePage.Instance);
+    }
+    public void OpenSettingsPage(bool inWindow)
+    {
+        OpenPageWithInstance(inWindow, AppWindow.Size, SettingsPage.Instance);
+    }
+    public void OpenAboutPage(bool inWindow)
+    {
+        OpenPageWithInstance(inWindow, new(600, 400), AboutPage.Instance);
     }
 
+    public void OpenContentWindow(ContentWindow contentWindow)
+    {
+        _multipleWindowManager.CreateWindowWithConfiguration(contentWindow);
+    }
     public void SetSubtitle(string text)
     {
         MainTitleBar.Subtitle = text;

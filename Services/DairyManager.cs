@@ -17,7 +17,7 @@ using MyDairy.Models;
 using MyDairy.Serialization;
 using MyDairy.Settings;
 using Windows.Foundation;
-using static System.Net.Mime.MediaTypeNames;
+using Windows.Media.AppBroadcasting;
 
 namespace MyDairy.Services;
 
@@ -95,6 +95,11 @@ public partial class DairyManager
             FileSaved?.Invoke(this, EventArgs.Empty);
         }
     }
+    public async ValueTask ExportToFileAsync(string filePath)
+    {
+        var dairyFileJsonText = JsonSerializer.Serialize(_currentFile, DairySerializerContext.Default.DairyFile);
+        await File.WriteAllTextAsync(filePath, dairyFileJsonText);
+    }
     public async ValueTask LoadFileAsync(string filePath)
     {
         ReleaseCurrentFile();
@@ -105,7 +110,7 @@ public partial class DairyManager
         IsEncrypted = _jsonDocument.RootElement.TryGetProperty(GlobalConstants.EncryptedContentKey, out var element) && element.ValueKind == JsonValueKind.String;
         _currentFilePath = filePath;
     }
-    public async ValueTask<bool> TryParseFileAsync(string password)
+    public bool TryParseFile(string password)
     {
         if (_jsonDocument == null)
         {
@@ -185,17 +190,23 @@ public partial class DairyManager
     }
     public DairyDay CreateNewDay(DateOnly dateOnly)
     {
-        foreach (var day in _currentFile.DairyDays)
+        var index = 0;
+        for (; index < _currentFile.DairyDays.Count; index++)
         {
+            var day = _currentFile.DairyDays[index];
             if (day.Date == dateOnly)
             {
                 return day;
+            }
+            if (day.Date > dateOnly)
+            {
+                break;
             }
         }
 
         var newDay = new DairyDay() { Date = dateOnly };
 
-        ExecuteCommand(new(() => _currentFile.DairyDays.Add(newDay), () =>
+        ExecuteCommand(new(() => _currentFile.DairyDays.Insert(index, newDay), () =>
         {
             _currentFile.DairyDays.Remove(newDay);
             DairyDayRemoved?.Invoke(this, newDay);

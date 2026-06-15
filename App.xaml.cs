@@ -46,5 +46,7 @@ public partial class App : Application
         Window.Activate();
 
         Window.ReturnToDairyPage();
+
+        //Window.OpenWindowWithContent(new Grid(), "Title");
     }
 }

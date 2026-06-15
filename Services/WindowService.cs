@@ -18,6 +18,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using MyDairy.Common;
 using MyDairy.Helpers;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using WinRT;
 using WinRT.Interop;
@@ -27,37 +28,21 @@ namespace MyDairy.Services;
 public partial class WindowService
 {
     private BackdropType _backdropType = BackdropType.None;
+    private bool _useInterceptTitleBarCaptionAreaChanged = false;
+
     private ISystemBackdropControllerWithTargets _controller = null;
     private readonly ICompositionSupportsSystemBackdrop _windowBackdrop = null;
 
     private readonly Window _window;
+    private readonly WindowExtendedConfiguration _extendedConfiguration;
     private readonly SystemBackdropConfiguration _config = new();
     private readonly DesktopAcrylicController _acrylic = new();
     private readonly MicaController _mica = new();
     private readonly OverlappedPresenter _presenter = null;
     private InputNonClientPointerSource _inputNonClientPointerSource;
 
-    private bool _enabled = false;
-    private bool IsEnabled
-    {
-        get => _enabled;
-        set
-        {
-            _enabled = value;
-            SetInputActive();
-        }
-    }
-
+    private bool _isEnabled = false;
     private bool _isActived = false;
-    private bool IsActive
-    {
-        get => _isActived;
-        set
-        {
-            _isActived = value;
-            SetInputActive();
-        }
-    }
 
     private void UpdateTitleBarColor(ElementTheme theme)
     {
@@ -83,11 +68,12 @@ public partial class WindowService
     }
     private void SetInputActive()
     {
-        _config.IsInputActive = _enabled && _isActived;
+        _config.IsInputActive = _isEnabled && _isActived;
     }
     private void OnActivated(object sender, WindowActivatedEventArgs args)
     {
-        IsActive = args.WindowActivationState != WindowActivationState.Deactivated;
+        _isActived = args.WindowActivationState != WindowActivationState.Deactivated;
+        SetInputActive();
     }
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
@@ -105,7 +91,8 @@ public partial class WindowService
             _controller?.RemoveSystemBackdropTarget(_windowBackdrop);
             SetController(_acrylic);
         }
-        IsEnabled = true;
+        _isEnabled = true;
+        SetInputActive();
     }
     private void SwitchMica(MicaKind kind)
     {
@@ -115,7 +102,8 @@ public partial class WindowService
             SetController(_mica);
         }
         _mica.Kind = kind;
-        IsEnabled = true;
+        _isEnabled = true;
+        SetInputActive();
     }
     private void SwitchNone()
     {
@@ -130,7 +118,8 @@ public partial class WindowService
                 SwitchAcrylic();
             }
         }
-        IsEnabled = false;
+        _isEnabled = false;
+        SetInputActive();
     }
 
     private void SetController(ISystemBackdropControllerWithTargets controller)
@@ -138,96 +127,57 @@ public partial class WindowService
         _controller = controller;
         controller.AddSystemBackdropTarget(_windowBackdrop);
     }
+    private void SetBackdropType(BackdropType backdropType)
+    {
+        _backdropType = ThemeService.GetActualBackdropType(backdropType);
+
+        switch (_backdropType)
+        {
+            case BackdropType.Acrylic:
+                SwitchAcrylic();
+                break;
+            case BackdropType.Mica:
+                SwitchMica(MicaKind.Base);
+                break;
+            case BackdropType.MicaAlt:
+                SwitchMica(MicaKind.BaseAlt);
+                break;
+            default:
+                SwitchNone();
+                break;
+        }
+    }
+    private void SetRequestedTheme(ElementTheme requestedTheme)
+    {
+        _window.Content.As<FrameworkElement>().RequestedTheme = requestedTheme;
+    }
+    private void SetUseInterceptTitleBarCaptionAreaChanged(bool useInterceptTitleBarCaptionAreaChanged)
+    {
+        if (_useInterceptTitleBarCaptionAreaChanged != useInterceptTitleBarCaptionAreaChanged)
+        {
+            _useInterceptTitleBarCaptionAreaChanged = useInterceptTitleBarCaptionAreaChanged;
+
+            _inputNonClientPointerSource ??= InputNonClientPointerSource.GetForWindowId(_window.AppWindow.Id);
+
+            if (useInterceptTitleBarCaptionAreaChanged)
+            {
+                _inputNonClientPointerSource.RegionsChanged += InputNonClientPointerSource_RegionsChanged;
+            }
+            else
+            {
+                _inputNonClientPointerSource.RegionsChanged -= InputNonClientPointerSource_RegionsChanged;
+            }
+        }
+    }
 
     private void OnWindowClosed(object sender, WindowEventArgs args)
     {
+        _extendedConfiguration.PropertyChanged -= OnExtendedConfigurationPropertyChanged;
+        _window.Content.As<FrameworkElement>().ActualThemeChanged -= OnActualThemeChanged;
         _window.Activated -= OnActivated;
+        _window.Closed -= OnWindowClosed;
         _mica?.Dispose();
         _acrylic?.Dispose();
-    }
-
-    public BackdropType BackdropType
-    {
-        get => _backdropType;
-        set
-        {
-            var actualValue = ThemeService.GetActualBackdropType(value);
-            if (_backdropType != actualValue)
-            {
-                _backdropType = actualValue;
-
-                switch (_backdropType)
-                {
-                    case BackdropType.Acrylic:
-                        SwitchAcrylic();
-                        break;
-                    case BackdropType.Mica:
-                        SwitchMica(MicaKind.Base);
-                        break;
-                    case BackdropType.MicaAlt:
-                        SwitchMica(MicaKind.BaseAlt);
-                        break;
-                    default:
-                        SwitchNone();
-                        break;
-                }
-            }
-        }
-    }
-
-    public bool IsAlwaysOnTop
-    {
-        get => _presenter.IsAlwaysOnTop;
-        set => _presenter.IsAlwaysOnTop = value;
-    }
-
-    public int? MinHeight
-    {
-        get => _presenter.PreferredMinimumHeight;
-        set => _presenter.PreferredMinimumHeight = value;
-    }
-    public int? MaxHeight
-    {
-        get => _presenter.PreferredMaximumHeight;
-        set => _presenter.PreferredMaximumHeight = value;
-    }
-    public int? MinWidth
-    {
-        get => _presenter.PreferredMinimumWidth;
-        set => _presenter.PreferredMinimumWidth = value;
-    }
-    public int? MaxWidth
-    {
-        get => _presenter.PreferredMaximumWidth;
-        set => _presenter.PreferredMaximumWidth = value;
-    }
-
-    private bool _useInterceptTitleBarCaptionAreaChanged = false;
-    /// <summary>
-    /// Intercept changes to the title area of the title bar, and reset the new area when the title area is changed.
-    /// defaultValue: <b>false</b>
-    /// </summary>
-    public bool UseInterceptTitleBarCaptionAreaChanged
-    {
-        get => _useInterceptTitleBarCaptionAreaChanged;
-        set
-        {
-            if (_useInterceptTitleBarCaptionAreaChanged != value)
-            {
-                _useInterceptTitleBarCaptionAreaChanged = value;
-
-                _inputNonClientPointerSource ??= InputNonClientPointerSource.GetForWindowId(_window.AppWindow.Id);
-
-                if (value)
-                {
-                    _inputNonClientPointerSource.RegionsChanged += InputNonClientPointerSource_RegionsChanged;
-                }
-                else
-                {
-                    _inputNonClientPointerSource.RegionsChanged -= InputNonClientPointerSource_RegionsChanged;
-                }
-            }
-        }
     }
 
     private bool _regionReset = false;
@@ -269,24 +219,67 @@ public partial class WindowService
         //}
     }
 
-    public WindowService(Window window)
+    public int? MinHeight
+    {
+        get => _presenter.PreferredMinimumHeight;
+        set => _presenter.PreferredMinimumHeight = value;
+    }
+    public int? MaxHeight
+    {
+        get => _presenter.PreferredMaximumHeight;
+        set => _presenter.PreferredMaximumHeight = value;
+    }
+    public int? MinWidth
+    {
+        get => _presenter.PreferredMinimumWidth;
+        set => _presenter.PreferredMinimumWidth = value;
+    }
+    public int? MaxWidth
+    {
+        get => _presenter.PreferredMaximumWidth;
+        set => _presenter.PreferredMaximumWidth = value;
+    }
+
+    public WindowService(Window window, WindowExtendedConfiguration configuration)
     {
         _window = window;
+        //_windowId = window.AppWindow.Id;
         _windowBackdrop = window.As<ICompositionSupportsSystemBackdrop>();
 
-        var element = (FrameworkElement)_window.Content;
+        var element = window.Content.As<FrameworkElement>();
 
-        _window.Closed += OnWindowClosed;
-        _window.Activated += OnActivated;
-        element.ActualThemeChanged += OnActualThemeChanged;
+        _extendedConfiguration = configuration;
+
         _acrylic.SetSystemBackdropConfiguration(_config);
         _mica.SetSystemBackdropConfiguration(_config);
 
-        UpdateAcrylicColor(element.ActualTheme);
+        _presenter = window.AppWindow.Presenter.As<OverlappedPresenter>();
+
+        SetBackdropType(_extendedConfiguration.BackdropType);
+        SetRequestedTheme(_extendedConfiguration.RequestedTheme);
+        SetUseInterceptTitleBarCaptionAreaChanged(_extendedConfiguration.UseInterceptTitleBarCaptionAreaChanged);
         OnActualThemeChanged(element, null);
 
-        _presenter = _window.AppWindow.Presenter.As<OverlappedPresenter>();
+        // Add Event
+        _extendedConfiguration.PropertyChanged += OnExtendedConfigurationPropertyChanged;
+        window.Closed += OnWindowClosed;
+        window.Activated += OnActivated;
+        element.ActualThemeChanged += OnActualThemeChanged;
+    }
 
-        SwitchNone();
+    private void OnExtendedConfigurationPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(WindowExtendedConfiguration.BackdropType):
+                SetBackdropType(_extendedConfiguration.BackdropType);
+                break;
+            case nameof(WindowExtendedConfiguration.RequestedTheme):
+                SetRequestedTheme(_extendedConfiguration.RequestedTheme);
+                break;
+            case nameof(WindowExtendedConfiguration.UseInterceptTitleBarCaptionAreaChanged):
+                SetUseInterceptTitleBarCaptionAreaChanged(_extendedConfiguration.UseInterceptTitleBarCaptionAreaChanged);
+                break;
+        }
     }
 }

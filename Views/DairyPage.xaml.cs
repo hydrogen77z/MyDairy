@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.AccessControl;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using ABI.Windows.Foundation.Collections;
 using Microsoft.UI;
@@ -22,7 +23,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.Storage.Pickers;
-using MyDairy.Attached;
 using MyDairy.Common;
 using MyDairy.Controls;
 using MyDairy.Helpers;
@@ -46,15 +46,6 @@ namespace MyDairy.Views;
 /// </summary>
 public sealed partial class DairyPage : Page
 {
-    public Brush MenuBarBrush
-    {
-        get;
-    }
-    public Brush ContentBrush
-    {
-        get;
-    }
-
     private static DairyPage _instance = null;
     public static DairyPage Instance => _instance;
 
@@ -75,25 +66,30 @@ public sealed partial class DairyPage : Page
         InitializeComponent();
 
         _instance = this;
-        MenuBarBrush = (Brush)Resources["MenuBarBackgroundBrush"];
-        ContentBrush = (Brush)Resources["ContentBackgroundBrush"];
-
-        MenuBarBrush.Opacity = AppSettings.Instance.MenuBarOpacity;
-        ContentBrush.Opacity = AppSettings.Instance.ContentOpacity;
 
         AppSettings.Instance.PropertyChanged += OnSettingsPropertyChanged;
 
+        static string Read(string resource)
+        {
+            return (resource + "/Content").GetLocalized("Settings");
+        }
+
+        (MenuViewPane0.Text, MenuViewPane1.Text, MenuViewPane2.Text) = (Read("CompactDoubleListView"), Read("DoubleListView"), Read("TreeView"));
         _dairyPane = new([MenuViewPane0, MenuViewPane1, MenuViewPane2], AppSettings.Instance.DefaultDairyView, "MenuViewPane");
         _dairyPane.RadioChanged += MenuViewPane_RadioChanged;
 
+        (MenuViewPaneDisplayMode0.Text, MenuViewPaneDisplayMode1.Text) = (Read("Inline"), Read("Overlay"));
         _paneDisplayMode = new([MenuViewPaneDisplayMode0, MenuViewPaneDisplayMode1], AppSettings.Instance.DairyPaneDisplayMode, "MenuViewPaneDisplayMode");
         _paneDisplayMode.RadioChanged += PaneDisplayModeView_RadioChanged;
 
+        (MenuViewQuickNote0.Text, MenuViewQuickNote1.Text, MenuViewQuickNote2.Text) = (Read("LeftPane"), Read("Bottom"), Read("Hidden"));
         _quickNoteDisplayMode = new([MenuViewQuickNote0, MenuViewQuickNote1, MenuViewQuickNote2], AppSettings.Instance.QuickNoteDisplayMode, "MenuViewQuickNote");
         _quickNoteDisplayMode.RadioChanged += QuickNoteDisplayMode_RadioChanged;
 
         MainTabView.TabItemsSource = ViewModel.OpenedTexts;
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+        DairyTextControl.SetDairyTextTemplate((DataTemplate)Resources["DairyTextPresentTemplate"]);
 
         App.Window.PaneToggleRequested += OnTitleBarPaneToggleRequested;
         App.Window.AppWindow.Closing += AppWindow_Closing;
@@ -121,12 +117,6 @@ public sealed partial class DairyPage : Page
     {
         switch (e.PropertyName)
         {
-            case nameof(AppSettings.MenuBarOpacity):
-                MenuBarBrush.Opacity = AppSettings.Instance.MenuBarOpacity;
-                break;
-            case nameof(AppSettings.ContentOpacity):
-                ContentBrush.Opacity = AppSettings.Instance.ContentOpacity;
-                break;
             case nameof(AppSettings.DefaultDairyView):
                 SelectPresentView();
                 break;
@@ -140,15 +130,6 @@ public sealed partial class DairyPage : Page
                 SelectQuickNoteDisplayMode();
                 break;
         }
-    }
-
-    private void OnSettingsClick(object sender, RoutedEventArgs e)
-    {
-        App.Window.OpenPage(typeof(SettingsPage));
-    }
-    private void OnDebugClick(object sender, RoutedEventArgs e)
-    {
-        App.Window.OpenPage(typeof(DebugPage));
     }
 
     private async void OnMenuFileOpenClick(object sender, RoutedEventArgs e)
@@ -175,7 +156,7 @@ public sealed partial class DairyPage : Page
 
         NewPasswordControl.ClearPassword();
 
-        if (await NewDairyDialog.ShowAsync() == ContentDialogResult.Primary)
+        if (await ContentDialogService.ShowWithInfoAsync(NewDairyDialog, XamlRoot) == ContentDialogResult.Primary)
         {
             var file = new DairyFile()
             {
@@ -208,26 +189,28 @@ public sealed partial class DairyPage : Page
             await ViewModel.Manager.SaveAsFileAsync(filePath);
         }
     }
+    private async void OnMenuFileExportClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.Manager.IsEncrypted)
+        {
+            if (!await RequestCurrentPasswordAsync("ExportPasswordDialog/Title".GetLocalized()))
+            {
+                return;            
+            }
+        }
+
+        if (await RequestSaveAsFilePath() is string filePath)
+        {
+            await ViewModel.Manager.ExportToFileAsync(filePath);
+        }
+    }
     private void OnMenuFileInfoClick(object sender, RoutedEventArgs e)
     {
         LoadFileInfo();
     }
-
-    // Content Dialog Initialize
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    private void OnMenuAboutClick(object sender, RoutedEventArgs e)
     {
-        DialogExtension.SetKind(JsonDialog, ContentDialogKind.Close);
-        DialogExtension.SetKind(ErrorDialog, ContentDialogKind.Close);
-        DialogExtension.SetKind(NewDairyDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(IsSaveToFileDialog, ContentDialogKind.SaveUnsaveCancel);
-        DialogExtension.SetKind(CreateNewDayDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(CreateNewTextDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(DeleteConfirmDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(EditFileInfoDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(RequestPasswordDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(SetPasswordDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(ChangePasswordDialog, ContentDialogKind.OkClose);
-        DialogExtension.SetKind(RemovePasswordDialog, ContentDialogKind.OkClose);
+        App.Window.OpenAboutPage(AppSettings.Instance.AboutOpenMode == NewPageOpenMode.InNewWindow);
     }
     #endregion
 
@@ -236,9 +219,13 @@ public sealed partial class DairyPage : Page
     {
         MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
     }
+    private void OnSettingsClick(object sender, RoutedEventArgs e)
+    {
+        App.Window.OpenSettingsPage(AppSettings.Instance.SettingsOpenMode == NewPageOpenMode.InNewWindow);
+    }
     private void OnViewAllClicked(object sender, RoutedEventArgs e)
     {
-        App.Window.OpenPage(typeof(NotePage));
+        App.Window.OpenNotePage(AppSettings.Instance.QuickNoteOpenMode == NewPageOpenMode.InNewWindow);
     }
     private void OnCreateNewNote(FeedbackButton sender, FeedbackButtonClickEventArgs e)
     {
@@ -317,7 +304,9 @@ public sealed partial class DairyPage : Page
         JsonDialogStackTrace.Text = jsonException.StackTrace;
 
         JsonDialogExpander.IsExpanded = false;
-        await JsonDialog.ShowAsync();
+
+        await ContentDialogService.ShowWithInfoAsync(JsonDialog, XamlRoot);
+        //await JsonDialog.ShowAsync();
     }
     public async ValueTask ShowException(Exception exception)
     {
@@ -325,7 +314,9 @@ public sealed partial class DairyPage : Page
         ErrorDialogStackTrace.Text = exception.StackTrace;
 
         ErrorDialogExpander.IsExpanded = false;
-        await ErrorDialog.ShowAsync();
+
+        await ContentDialogService.ShowWithInfoAsync(ErrorDialog, XamlRoot);
+        //await ErrorDialog.ShowAsync();
     }
     private async ValueTask<ContentDialogResult> ShowIsSaveDialog()
     {
@@ -341,7 +332,7 @@ public sealed partial class DairyPage : Page
 
         IsSaveToFileDialog.Content = fileText;
 
-        return await IsSaveToFileDialog.ShowAsync();
+        return await ContentDialogService.ShowWithInfoAsync(IsSaveToFileDialog, XamlRoot);
     }
     private async ValueTask ShowEditFileInfoDialog()
     {
@@ -350,7 +341,7 @@ public sealed partial class DairyPage : Page
         EditDairyAuthorBox.Text = file.Author;
         EditDairyDescriptionBox.Text = file.Description;
 
-        if (ContentDialogResult.Primary == await EditFileInfoDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(EditFileInfoDialog, XamlRoot))
         {
             ViewModel.Manager.EditFileInfo(EditDairyNameBox.Text, EditDairyAuthorBox.Text, EditDairyDescriptionBox.Text);
 
@@ -363,17 +354,16 @@ public sealed partial class DairyPage : Page
     {
         RequestPasswordControl.ClearPassword();
 
-        await RequestPasswordDialog.ShowAsync();
-        //if (ContentDialogResult.None == await RequestPasswordDialog.ShowAsync())
-        //{
-        //    ViewModel.Manager.ReleaseCurrentFile();
-        //}
+        if (ContentDialogResult.None == await ContentDialogService.ShowWithInfoAsync(RequestPasswordDialog, XamlRoot))
+        {
+            ViewModel.Manager.ReleaseCurrentFile();
+        }
     }
     private async ValueTask ShowSetPasswordDialog()
     {
         SetPasswordControl.ClearPassword();
 
-        if (ContentDialogResult.Primary == await SetPasswordDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(SetPasswordDialog, XamlRoot))
         {
             if (SetPasswordControl.TryGetVerifyPassword(out var verifyPassword))
             {
@@ -385,7 +375,7 @@ public sealed partial class DairyPage : Page
     {
         ChangePasswordControl.ClearPassword();
 
-        if (ContentDialogResult.Primary == await ChangePasswordDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(ChangePasswordDialog, XamlRoot))
         {
             if (ChangePasswordControl.TryGetVerifyPassword(out var verifyPassword))
             {
@@ -393,21 +383,19 @@ public sealed partial class DairyPage : Page
             }
         }
     }
-    private async ValueTask ShowRemovePasswordDialog()
+    private async ValueTask<bool> RequestCurrentPasswordAsync(string title)
     {
-        RemovePasswordControl.ClearPassword();
+        RequestCurrentPasswordDialog.Title = title;
+        RequestCurrentPasswordControl.ClearPassword();
 
-        if (ContentDialogResult.Primary == await RemovePasswordDialog.ShowAsync())
-        {
-            ViewModel.Manager.ChangePassword(null);
-        }
+        return ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(RequestCurrentPasswordDialog, XamlRoot);
     }
 
     private async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
     {
         args.Cancel = true;
 
-        if (DialogExtension.TryGetOpenedContentDialog() is ContentDialog dialog)
+        if (ContentDialogService.TryGetOpenedContentDialog() is ContentDialog dialog)
         {
             dialog.Hide();
         }
@@ -486,7 +474,7 @@ public sealed partial class DairyPage : Page
         {
             return;
         }
-        ViewModel.CurrentText = null;
+        ViewModel.OpenText(null);
 
         var file = ViewModel.CurrentFile;
         var totalText = 0;
@@ -505,7 +493,7 @@ public sealed partial class DairyPage : Page
 
         LoadFilePasswordInfo();
 
-        MainPresenter.ShowExtraContent();
+        MainPresenter.ShowExtraContent(0);
     }
     private void LoadFilePasswordInfo()
     {
@@ -612,7 +600,7 @@ public sealed partial class DairyPage : Page
                 }
                 else
                 {
-                    await ViewModel.Manager.TryParseFileAsync(null);
+                    ViewModel.Manager.TryParseFile(null);
                 }
             }
         }
@@ -626,7 +614,24 @@ public sealed partial class DairyPage : Page
         }
     }
 
-    private void ChangePasswordDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    // Validating
+    private void RequestPasswordDialog_Validating(ContentDialogService sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (!RequestPasswordControl.TryGetRequestPassword(out var password))
+        {
+            args.Cancel = true;
+            return;
+        }
+
+        var succeed = ViewModel.Manager.TryParseFile(password);
+        RequestPasswordControl.ShowIncorrectPrompt(succeed);
+
+        if (!succeed)
+        {
+            args.Cancel = true;
+        }
+    }
+    private void ChangePasswordDialog_Validating(ContentDialogService sender, ContentDialogButtonClickEventArgs args)
     {
         if (!ViewModel.HasCurrentFile)
         {
@@ -640,56 +645,26 @@ public sealed partial class DairyPage : Page
             args.Cancel = !succeed;
         }
     }
-    private void RemovePasswordDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    private void RequestCurrentPasswordDialog_Validating(ContentDialogService sender, ContentDialogButtonClickEventArgs args)
     {
         if (!ViewModel.HasCurrentFile)
         {
             return;
         }
 
-        if (RemovePasswordControl.TryGetRequestPassword(out var requestPassword))
+        if (RequestCurrentPasswordControl.TryGetRequestPassword(out var requestPassword))
         {
             var succeed = requestPassword.Equals(ViewModel.CurrentPassword);
-            RemovePasswordControl.ShowIncorrectPrompt(succeed);
+            RequestCurrentPasswordControl.ShowIncorrectPrompt(succeed);
             args.Cancel = !succeed;
         }
     }
-    private async void RequestPasswordDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-        args.Cancel = true;
 
-        if (!RequestPasswordControl.TryGetRequestPassword(out var password))
-        {
-            return;
-        }
-
-        RequestPasswordDialog.IsPrimaryButtonEnabled = false;
-        RequestPasswordDialog.Closing += PasswordDialog_Closing;
-
-        var succeed = await ViewModel.Manager.TryParseFileAsync(password);
-        RequestPasswordControl.ShowIncorrectPrompt(succeed);
-
-        RequestPasswordDialog.Closing -= PasswordDialog_Closing;
-        RequestPasswordDialog.IsPrimaryButtonEnabled = true;
-
-        if (succeed)
-        {
-            RequestPasswordDialog.Hide();
-        }
-    }
-    private void PasswordDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
-    {
-        args.Cancel = true;
-    }
     private void NewPasswordBox_Checked(object sender, RoutedEventArgs e)
     {
         NewPasswordControl.Visibility = XamlHelper.ToVisible(NewSetPasswordBox.IsChecked == true);
     }
 
-    private void RequestPasswordDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-        ViewModel.Manager.ReleaseCurrentFile();
-    }
     private async void OnSetPassword(object sender, RoutedEventArgs e)
     {
         await ShowSetPasswordDialog();
@@ -700,7 +675,10 @@ public sealed partial class DairyPage : Page
     }
     private async void OnRemovePassword(object sender, RoutedEventArgs e)
     {
-        await ShowRemovePasswordDialog();
+        if (await RequestCurrentPasswordAsync("RemovePasswordDialog/Title".GetLocalized()))
+        {
+            ViewModel.Manager.ChangePassword(null);
+        }
     }
     #endregion
 
@@ -709,14 +687,14 @@ public sealed partial class DairyPage : Page
     {
         if (ContentViewDoubleListView.InnerSelectedItem is DairyText text)
         {
-            ViewModel.CurrentText = text;
+            ViewModel.OpenText(text);
         }
     }
     private void ContentViewTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
     {
         if (args.InvokedItem is DairyText text)
         {
-            ViewModel.CurrentText = text;
+            ViewModel.OpenText(text);
         }
     }
 
@@ -726,15 +704,7 @@ public sealed partial class DairyPage : Page
     }
     private void MainTabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ViewModel.CurrentText = MainTabView.SelectedItem as DairyText;
-        //if (MainTabView.SelectedItem is DairyText text)
-        //{
-        //    ViewModel.CurrentText = text;
-        //}
-        //else
-        //{
-        //    ViewModel.CurrentText = null;
-        //}
+        ViewModel.OpenText(MainTabView.SelectedItem as DairyText);
     }
 
     private async void OnCreateNewDay(object sender, RoutedEventArgs e)
@@ -746,7 +716,7 @@ public sealed partial class DairyPage : Page
 
         CreateNewDayBox.PlaceholderText = string.Format("CreateNewDayFormat".GetLocalized(), XamlHelper.DateOnlyToString(DateOnly.FromDateTime(DateTime.Today)));
 
-        if (ContentDialogResult.Primary == await CreateNewDayDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(CreateNewDayDialog, XamlRoot))
         {
             var text = CreateNewDayBox.Text;
 
@@ -822,7 +792,7 @@ public sealed partial class DairyPage : Page
         NewTextMoreOptionsExpander.IsExpanded = false;
         NewTextApproximateBox.IsChecked = false;
 
-        if (ContentDialogResult.Primary == await CreateNewTextDialog.ShowAsync())
+        if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(CreateNewTextDialog, XamlRoot))
         {
             var now = DateTime.Now;
             var title = NewTextTitle.Text;
@@ -883,7 +853,7 @@ public sealed partial class DairyPage : Page
             DeleteConfirmTextBlock.Text = promptText();
             DeleteConfirmCheckBox.IsChecked = false;
 
-            if (ContentDialogResult.Primary == await DeleteConfirmDialog.ShowAsync())
+            if (ContentDialogResult.Primary == await ContentDialogService.ShowWithInfoAsync(DeleteConfirmDialog, XamlRoot))
             {
                 if (DeleteConfirmCheckBox.IsChecked == true)
                 {
@@ -916,11 +886,25 @@ public sealed partial class DairyPage : Page
     {
         await TryDelete(() => string.Format("DeleteConfirmTextFormat".GetLocalized(), ViewModel.CurrentText.SourceDate, ViewModel.CurrentText.Title), () => ViewModel.Manager.DeleteText(ViewModel.CurrentText));
     }
-    private void OnViewDairyText(object sender, RoutedEventArgs e)
+    private void OnOpenDairyText(object sender, RoutedEventArgs e)
     {
         if (((FrameworkElement)sender).DataContext is DairyText text)
         {
-            ViewModel.CurrentText = text;
+            ViewModel.OpenText(text);
+        }
+    }
+    private void OnOpenDairyTextInNewWindowContext(object sender, RoutedEventArgs e)
+    {
+        if (((FrameworkElement)sender).DataContext is DairyText text)
+        {
+            ViewModel.OpenTextInNewWindow(text);
+        }
+    }
+    private void OnOpenDairyTextInNewWindow(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.CurrentText != null)
+        {
+            ViewModel.OpenTextInNewWindow(ViewModel.CurrentText);
         }
     }
 
@@ -938,8 +922,33 @@ public sealed partial class DairyPage : Page
             ViewModel.Manager.Redo();
         }
     }
+
+    private bool _lock = false;
+    private async void OnContentSuggestBoxQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if (_lock == true)
+        {
+            return;
+        }
+
+        _lock = true;
+
+        ViewModel.OpenText(null);
+        var requestedText = args.QueryText;
+        var index = await ViewModel.TrySearchAsync(requestedText) ? 1 : 2;
+        MainPresenter.ShowExtraContent(index);
+
+        _lock = false;
+    }
+
+    public Size GetCurrentDataPresenterSize()
+    {
+        return new(MainPresenter.ActualWidth, MainPresenter.ActualHeight);
+    }
+
+    public void SaveCurrent()
+    {
+        OnMenuFileSaveClick(null, null);
+    }
     #endregion
 }
-
-// Next : Encrypt Service
-// Next : Multiple Window Manager

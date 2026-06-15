@@ -61,7 +61,7 @@
     <Thickness x:Key="SettingsCardIconMargin">2,0,20,0</Thickness>
     <x:Double x:Key="SettingsCardMaxWidth">Infinity</x:Double>
     <x:Double x:Key="SettingsCardMinWidth">120</x:Double>
-    <x:Double x:Key="SettingsCardMinHeight">68</x:Double>
+    <x:Double x:Key="SettingsCardMinHeight">60</x:Double>
     <x:Double x:Key="SettingsCardActionButtonWidth">32</x:Double>
     <x:Double x:Key="SettingsCardActionButtonHeight">32</x:Double>
     <x:Double x:Key="SettingsCardDescriptionFontSize">12</x:Double>

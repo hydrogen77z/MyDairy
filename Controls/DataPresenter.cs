@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using WinRT;
 
 namespace MyDairy.Controls;
 
 public partial class DataPresenter : Control
 {
+    private ContentPresenter _extraContent;
+    private Storyboard _storyboard;
+
     public DataPresenter()
     {
         DefaultStyleKey = typeof(DataPresenter);
@@ -21,6 +25,8 @@ public partial class DataPresenter : Control
     {
         base.OnApplyTemplate();
 
+        _extraContent = GetTemplateChild("ExtraPresenter").As<ContentPresenter>();
+        _storyboard = GetTemplateChild("ExtraStoryboard").As<Storyboard>();
         OnDataChanged();
     }
 
@@ -36,9 +42,11 @@ public partial class DataPresenter : Control
         }
     }
 
-    public void ShowExtraContent()
+    public void ShowExtraContent(int index)
     {
+        _extraContent.Content = ExtraContents[index];
         VisualStateManager.GoToState(this, "Extra", true);
+        _storyboard?.Begin();
     }
 
     public object Data
@@ -65,12 +73,8 @@ public partial class DataPresenter : Control
 
     public static readonly DependencyProperty NoDataContentProperty = DependencyProperty.Register(nameof(NoDataContent), typeof(object), typeof(DataPresenter), new(null));
 
-    public object ExtraContent
+    public IList<object> ExtraContents
     {
-        get => GetValue(ExtraContentProperty);
-        set => SetValue(ExtraContentProperty, value);
-    }
-
-    public static readonly DependencyProperty ExtraContentProperty = DependencyProperty.Register(nameof(ExtraContent), typeof(object), typeof(DataPresenter), new(null));
-
+        get;
+    } = [];
 }

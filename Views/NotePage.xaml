@@ -7,7 +7,6 @@
     xmlns:common="using:MyDairy.Common"
     xmlns:models="using:MyDairy.Models"
     xmlns:markup="using:MyDairy.Markup"
-    xmlns:attached="using:MyDairy.Attached"
     xmlns:helpers="using:MyDairy.Helpers"
     xmlns:settings="using:MyDairy.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,14 +16,14 @@
 
     <Page.Tag>
         <common:ObjectCollection>
-            <ContentDialog x:Name="NewNoteDialog" x:Uid="/Note/NewNote" attached:DialogExtension.Kind="OkClose"
-                           IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(NewNoteBox.Text),Mode=OneWay}">
+            <common:ContentDialogInfo x:Name="NewNoteDialog" x:Uid="/Note/NewNote" Kind="OkClose"
+                                      IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(NewNoteBox.Text),Mode=OneWay}">
                 <TextBox x:Name="NewNoteBox" x:Uid="/Note/NewNoteBox" Width="400" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
-            </ContentDialog>
-            <ContentDialog x:Name="EditNoteDialog" x:Uid="/Note/EditNote" attached:DialogExtension.Kind="OkClose"
-                           IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(EditNoteBox.Text),Mode=OneWay}">
+            </common:ContentDialogInfo>
+            <common:ContentDialogInfo x:Name="EditNoteDialog" x:Uid="/Note/EditNote" Kind="OkClose"
+                                      IsPrimaryButtonEnabled="{x:Bind helpers:XamlHelper.NotNullStringToEnable(EditNoteBox.Text),Mode=OneWay}">
                 <TextBox x:Name="EditNoteBox" x:Uid="/Note/NewNoteBox" Width="400" MaxHeight="160" Style="{StaticResource WrappedTextBoxStyle}" />
-            </ContentDialog>
+            </common:ContentDialogInfo>
         </common:ObjectCollection>
     </Page.Tag>
     
@@ -54,7 +53,7 @@
                 <DataTemplate x:DataType="models:Note">
                     <GridViewItem HorizontalContentAlignment="Left" ContextFlyout="{StaticResource NoteDeleteFlyout}">
                         <StackPanel Margin="8" Spacing="4">
-                            <TextBlock Text="{x:Bind Content,Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind Content,Mode=OneWay}" TextWrapping="Wrap" />
                             <TextBlock Style="{StaticResource LowlightTextBlock}" FontSize="12" Text="{x:Bind helpers:XamlHelper.DateTimeToString(LastEditTime),Mode=OneWay}" />
                         </StackPanel>
                     </GridViewItem>
@@ -64,9 +63,11 @@
 
         <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
             <AppBarButton x:Uid="/Note/NewNoteCommand" Icon="Add" Click="OnNewNote" />
+            <AppBarButton x:Name="CommandNewWindow" x:Uid="CommandNewWindow" Icon="{markup:FontIcon Glyph=&#xE8A7;}" Click="OnOpenInNewWindow" />
+            <AppBarButton x:Name="CommandReturn" x:Uid="CommandReturnMain" Icon="{markup:FontIcon Glyph=&#xE944;}" Click="OnReturnMainPage" />
 
-            <AppBarButton x:Name="EditCommand" x:Uid="/Note/EditNoteCommand" Icon="Edit" Click="OnEditNote" />
-            <AppBarButton x:Name="DeleteCommand" x:Uid="/Note/DeleteNoteCommand" Icon="Delete" Click="OnDeleteNote" />
+            <AppBarButton x:Name="CommandEdit" x:Uid="/Note/EditNoteCommand" Icon="Edit" Click="OnEditNote" />
+            <AppBarButton x:Name="CommandDelete" x:Uid="/Note/DeleteNoteCommand" Icon="Delete" Click="OnDeleteNote" />
         </CommandBar>
     </Grid>
 </Page>

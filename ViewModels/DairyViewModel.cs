@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using MyDairy.Common;
+using MyDairy.Controls;
+using MyDairy.Helpers;
 using MyDairy.Models;
 using MyDairy.Services;
 using MyDairy.Settings;
+using MyDairy.Views;
+using WinRT;
 
 namespace MyDairy.ViewModels;
 
@@ -72,6 +79,8 @@ public partial class DairyViewModel : ObservableObject
     private void Manager_DairyTextRemoved(object sender, DairyText e)
     {
         CloseText(e);
+        CloseWindowText(e);
+        CloseResult(e);
     }
 
     private void UpdateShowDairyCount()
@@ -87,7 +96,7 @@ public partial class DairyViewModel : ObservableObject
         }
     }
 
-    private void Instance_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(AppSettings.ShowDairyCount))
         {
@@ -103,5 +112,100 @@ public partial class DairyViewModel : ObservableObject
         {
             CurrentText = null;
         }
+    }
+    public void CloseWindowText(DairyText text)
+    {
+        if (OpenedInWindow.TryGetValue(text, out var window))
+        {
+            window.Close();
+            OpenedInWindow.Remove(text);
+        }
+    }
+    public void CloseResult(DairyText text)
+    {
+        ResultDate.Remove(text);
+        ResultTitle.Remove(text);
+    }
+
+    public void OpenText(DairyText text)
+    {
+        if (text != null && !OpenedTexts.Contains(text))
+        {
+            OpenedTexts.Add(text);
+        }
+
+        CurrentText = text;
+    }
+    public void OpenTextInNewWindow(DairyText text)
+    {
+        CloseText(text);
+
+        if (OpenedInWindow.TryGetValue(text, out var window))
+        {
+            window.Activate();
+            return;
+        }
+
+        ContentWindow newWindow = new();
+        DairyTextControl control = new()
+        {
+            DairyText = text,
+        };
+
+        var currentSize = DairyPage.Instance.GetCurrentDataPresenterSize();
+        currentSize.Width += control.GetExtraWidth();
+        currentSize.Height += control.GetExtraHeight();
+
+        newWindow.AppWindow.Resize(currentSize.ToSizeInt32());
+        newWindow.SetContent(control);
+
+        App.Window.OpenContentWindow(newWindow);
+
+        newWindow.Closed += OnContentWindowClosed;
+    }
+
+    public async ValueTask<bool> TrySearchAsync(string requestedText)
+    {
+        if (string.IsNullOrEmpty(requestedText))
+        {
+            return false;
+        }
+
+        await ValueTask.CompletedTask;
+
+        List<DairyText> resultDate = [];
+        List<DairyText> resultTitle = [];
+
+        var hasResult = false;
+        foreach (var day in CurrentFile.DairyDays)
+        {
+            var date = XamlHelper.DateOnlyToString(day.Date);
+
+            foreach (var text in day.Texts)
+            {
+                if (date.Contains(requestedText))
+                {
+                    resultDate.Add(text);
+                    hasResult = true;
+                }
+
+                if (text.Title.Contains(requestedText))
+                {
+                    resultTitle.Add(text);
+                    hasResult = true;
+                }
+            }
+        }
+
+        CollectionHelper.UpdateCollectionNoClear(ResultDate, resultDate);
+        CollectionHelper.UpdateCollectionNoClear(ResultTitle, resultTitle);
+
+        return hasResult;
+    }
+   
+    private void OnContentWindowClosed(object sender, WindowEventArgs args)
+    {
+        var window = sender.As<ContentWindow>();
+        CloseWindowText(window.GetContent().As<DairyTextControl>().DairyText);
     }
 }

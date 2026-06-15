@@ -5,11 +5,14 @@ using System.Text;
 using Microsoft.UI.Xaml;
 using MyDairy.Models;
 using MyDairy.Services;
+using MyDairy.Views;
 
 namespace MyDairy.ViewModels;
 
 public partial class DairyViewModel
 {
+    //internal DataTemplate _dairyTextPresentTemplate = null;
+
     public DairyManager Manager
     {
         get;
@@ -21,28 +24,15 @@ public partial class DairyViewModel
     public DairyFile CurrentFile => Manager.CurrentFile;
     public string CurrentPassword => Manager.CurrentPassword;
 
+    public bool HasCurrentFile => CurrentFile != null;
+    public bool HasCurrentText => _currentText != null;
+
     private DairyText _currentText = null;
     public DairyText CurrentText
     {
         get => _currentText;
-        set
-        {
-            if (_currentText != value)
-            {
-                if (value != null && !OpenedTexts.Contains(value))
-                {
-                    OpenedTexts.Add(value);
-                }
-
-                _currentText = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(HasCurrentText));
-            }
-        }
+        set => SetProperty(ref _currentText, value, nameof(CurrentText), nameof(HasCurrentText));
     }
-
-    public bool HasCurrentFile => CurrentFile != null;
-    public bool HasCurrentText => _currentText != null;
 
     private bool _isSaved = true;
     public bool IsSaved
@@ -52,4 +42,9 @@ public partial class DairyViewModel
     }
 
     public readonly ObservableCollection<DairyText> OpenedTexts = [];
+
+    public readonly Dictionary<DairyText, ContentWindow> OpenedInWindow = [];
+
+    public readonly ObservableCollection<DairyText> ResultDate = [];
+    public readonly ObservableCollection<DairyText> ResultTitle = [];
 }

@@ -20,14 +20,17 @@
 	  <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
 	  <GenerateDependencyFile>false</GenerateDependencyFile>
 	  <PublishAot>true</PublishAot>
+	  <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\DairyTextControl.xaml" />
     <None Remove="Controls\DataPresenter.xaml" />
     <None Remove="Controls\DoubleListView.xaml" />
     <None Remove="Controls\FeedbackButton.xaml" />
     <None Remove="Controls\GroupBox.xaml" />
     <None Remove="Controls\PasswordControl.xaml" />
     <None Remove="Controls\PropertyExpander.xaml" />
+    <None Remove="Views\AboutPage.xaml" />
     <None Remove="Views\DairyPage.xaml" />
     <None Remove="Views\DebugPage.xaml" />
     <None Remove="Views\SettingsPage.xaml" />
@@ -73,9 +76,18 @@
     <Page Update="Controls\PasswordControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Controls\DairyTextControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="MyDairy.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\AboutPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ContentWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\NotePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

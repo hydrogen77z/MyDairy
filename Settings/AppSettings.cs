@@ -108,6 +108,38 @@ public partial class AppSettings : ObservableObject
         set => SetProperty(ref _showDairyCount, value);
     }
 
+    private bool _autoSave = false;
+    public bool AutoSave
+    {
+        get => _autoSave;
+        set => SetProperty(ref _autoSave, value);
+    }
+    #endregion
+
+    #region Window Settings
+    private NewPageOpenMode _quickNoteOpenMode = NewPageOpenMode.InMainPage;
+    public NewPageOpenMode QuickNoteOpenMode
+    {
+        get => _quickNoteOpenMode;
+        set => SetProperty(ref _quickNoteOpenMode, value);
+    }
+
+    private NewPageOpenMode _settingsOpenMode = NewPageOpenMode.InMainPage;
+    public NewPageOpenMode SettingsOpenMode
+    {
+        get => _settingsOpenMode;
+        set => SetProperty(ref _settingsOpenMode, value);
+    }
+
+    private NewPageOpenMode _aboutOpenMode = NewPageOpenMode.InNewWindow;
+    public NewPageOpenMode AboutOpenMode
+    {
+        get => _aboutOpenMode;
+        set => SetProperty(ref _aboutOpenMode, value);
+    }
+    #endregion
+
+    #region Prompt Settings
     private bool _notShowDeleteAgain = false;
     public bool NotShowDeleteAgain
     {

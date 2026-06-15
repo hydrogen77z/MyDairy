@@ -73,8 +73,6 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="InnerContentStates">
-                            </VisualStateGroup>
                             <VisualStateGroup x:Name="PaneStates">
                                 <VisualState x:Name="NoInner">
                                     <VisualState.Setters>

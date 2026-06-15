@@ -32,9 +32,6 @@
     <converters:EnumIntConverter x:Key="EnumIntConverter" />
     <converters:OpacityConverter x:Key="OpacityConverter" />
 
-    <SolidColorBrush x:Key="CustomContentDialogBorderBrush" Color="{ThemeResource SystemAccentColor}" />
-
-    <Style x:Key="DefaultContentDialogStyle" TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}">
-        <Setter Property="BorderBrush" Value="{ThemeResource CustomContentDialogBorderBrush}" />
-    </Style>
+    <SolidColorBrush x:Key="MenuBarBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
+    <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{ThemeResource SolidBackgroundFillColorTertiary}" />
 </ResourceDictionary>

@@ -42,11 +42,11 @@ public partial class DairyFile
         get; set;
     }
 
-    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+    //[JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public ObservableCollection<DairyDay> DairyDays
     {
         get;
-    } = [];
+    }
 
     public DairyDay GetDayFromText(DairyText text)
     {
@@ -64,5 +64,21 @@ public partial class DairyFile
         }
 
         return null;
+    }
+
+    [JsonConstructor]
+    public DairyFile(string name, string author, string description, DateTime createTime, DateTime lastEditTime, ObservableCollection<DairyDay> dairyDays)
+    {
+        Name = name;
+        Author = author;
+        Description = description;
+        CreateTime = createTime;
+        LastEditTime = lastEditTime;
+
+        DairyDays = new(dairyDays.OrderBy(d => d.Date));
+    }
+
+    public DairyFile()
+    {
     }
 }

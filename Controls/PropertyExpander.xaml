@@ -35,7 +35,6 @@
 
                                     </VisualState.Setters>-->
                                     <VisualState.Storyboard>
-
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpanderContent" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
@@ -49,7 +48,6 @@
                                 </VisualState>
                                 <VisualState x:Name="CollapseDown">
                                     <VisualState.Storyboard>
-
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpanderContent" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="Collapsed" />

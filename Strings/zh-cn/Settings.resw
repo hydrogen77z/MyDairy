@@ -123,16 +123,16 @@
   <data name="Backdrop.Header" xml:space="preserve">
     <value>应用程序背景</value>
   </data>
-  <data name="BackdropAcrylic.Text" xml:space="preserve">
+  <data name="BackdropAcrylic.Content" xml:space="preserve">
     <value>亚克力</value>
   </data>
-  <data name="BackdropMica.Text" xml:space="preserve">
+  <data name="BackdropMica.Content" xml:space="preserve">
     <value>Mica (仅 Win11)</value>
   </data>
-  <data name="BackdropMicaAlt.Text" xml:space="preserve">
+  <data name="BackdropMicaAlt.Content" xml:space="preserve">
     <value>Mica Alt (仅 Win11)</value>
   </data>
-  <data name="BackdropNone.Text" xml:space="preserve">
+  <data name="BackdropNone.Content" xml:space="preserve">
     <value>无</value>
   </data>
   <data name="Theme.Header" xml:space="preserve">
@@ -141,13 +141,13 @@
   <data name="ThemeCommand.Content" xml:space="preserve">
     <value>Windows 颜色设置</value>
   </data>
-  <data name="ThemeDark.Text" xml:space="preserve">
+  <data name="ThemeDark.Content" xml:space="preserve">
     <value>深色</value>
   </data>
-  <data name="ThemeDefault.Text" xml:space="preserve">
+  <data name="ThemeDefault.Content" xml:space="preserve">
     <value>Windows 默认</value>
   </data>
-  <data name="ThemeLight.Text" xml:space="preserve">
+  <data name="ThemeLight.Content" xml:space="preserve">
     <value>浅色</value>
   </data>
   <data name="Transparency.Content" xml:space="preserve">
@@ -174,13 +174,13 @@
   <data name="DairyView.Description" xml:space="preserve">
     <value>更改所有日记呈现方式</value>
   </data>
-  <data name="CompactDoubleListView.Text" xml:space="preserve">
+  <data name="CompactDoubleListView.Content" xml:space="preserve">
     <value>紧凑列表视图</value>
   </data>
-  <data name="TreeView.Text" xml:space="preserve">
+  <data name="TreeView.Content" xml:space="preserve">
     <value>树视图</value>
   </data>
-  <data name="DoubleListView.Text" xml:space="preserve">
+  <data name="DoubleListView.Content" xml:space="preserve">
     <value>双列表视图</value>
   </data>
   <data name="DefaultSwitch.OnContent" xml:space="preserve">
@@ -222,25 +222,61 @@
   <data name="DairyPaneDisplayMode.Header" xml:space="preserve">
     <value>日记面板显示方式</value>
   </data>
-  <data name="Inline.Text" xml:space="preserve">
+  <data name="Inline.Content" xml:space="preserve">
     <value>内嵌</value>
   </data>
-  <data name="Overlay.Text" xml:space="preserve">
+  <data name="Overlay.Content" xml:space="preserve">
     <value>覆盖</value>
   </data>
   <data name="QuickNoteDisplayMode.Header" xml:space="preserve">
     <value>快速笔记显示方式</value>
   </data>
-  <data name="LeftPane.Text" xml:space="preserve">
+  <data name="LeftPane.Content" xml:space="preserve">
     <value>左侧栏</value>
   </data>
-  <data name="Bottom.Text" xml:space="preserve">
+  <data name="Bottom.Content" xml:space="preserve">
     <value>底部</value>
   </data>
-  <data name="Hidden.Text" xml:space="preserve">
+  <data name="Hidden.Content" xml:space="preserve">
     <value>隐藏</value>
   </data>
   <data name="QuickNoteDisplayMode.Description" xml:space="preserve">
     <value>更改快速笔记小组件的显示位置</value>
+  </data>
+  <data name="PromptSettings.Header" xml:space="preserve">
+    <value>提示设置</value>
+  </data>
+  <data name="PromptSettings.Description" xml:space="preserve">
+    <value>更改是否出现提示的选项</value>
+  </data>
+  <data name="OpenInMainPage.Content" xml:space="preserve">
+    <value>在主页面</value>
+  </data>
+  <data name="OpenInNewWindow.Content" xml:space="preserve">
+    <value>在新窗口中</value>
+  </data>
+  <data name="NotePageOpenMode.Header" xml:space="preserve">
+    <value>快速笔记打开方式</value>
+  </data>
+  <data name="NotePageOpenMode.Description" xml:space="preserve">
+    <value>打开快速笔记页面时的显示方式</value>
+  </data>
+  <data name="SettingsPageOpenMode.Header" xml:space="preserve">
+    <value>设置打开方式</value>
+  </data>
+  <data name="SettingsPageOpenMode.Description" xml:space="preserve">
+    <value>打开设置页面时的显示方式</value>
+  </data>
+  <data name="DairySettings.Header" xml:space="preserve">
+    <value>日记视图设置</value>
+  </data>
+  <data name="DairySettings.Description" xml:space="preserve">
+    <value>更改所有有关日记的设置</value>
+  </data>
+  <data name="OpenMode.Text" xml:space="preserve">
+    <value>页面打开方式设置</value>
+  </data>
+  <data name="PromptSettingsHeader.Text" xml:space="preserve">
+    <value>提示设置</value>
   </data>
 </root>
